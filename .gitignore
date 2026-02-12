@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+frontend/out/
+frontend/.next/
+contract/target/
+
+# Environment
+frontend/.env.local
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Wrangler
+.wrangler/

@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEAR Digital Card - Screen Previews</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --near-green: #00EC97;
+    --near-green-dim: #00ec9733;
+    --near-green-mid: #00ec9766;
+    --bg-primary: #0A0A0C;
+    --bg-card: #141418;
+    --bg-card-hover: #1A1A1F;
+    --bg-input: #1E1E24;
+    --bg-elevated: #1C1C22;
+    --border: #2A2A32;
+    --border-light: #3A3A44;
+    --text-primary: #F0F0F2;
+    --text-secondary: #8A8A96;
+    --text-tertiary: #5A5A66;
+    --white: #FFFFFF;
+    --danger: #FF4466;
+    --warning: #FFB344;
+    --blue: #4488FF;
+    --purple: #9966FF;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #050507;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== PAGE NAV ========== */
+  .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,5,7,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+  }
+  .page-header h1 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--near-green);
+  }
+  .page-header p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+  }
+  .page-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .page-nav a {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .page-nav a:hover {
+    color: var(--near-green);
+    border-color: var(--near-green);
+    background: var(--near-green-dim);
+  }
+
+  /* ========== SCREEN SHOWCASE ========== */
+  .screen-section {
+    padding: 60px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .screen-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--near-green);
+    margin-bottom: 8px;
+  }
+  .screen-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .screen-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+
+  /* ========== PHONE FRAME ========== */
+  .phone-frame {
+    width: 375px;
+    min-height: 700px;
+    background: var(--bg-primary);
+    border-radius: 40px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(0,236,151,0.05),
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 120px rgba(0,236,151,0.03);
+    margin: 0 auto;
+  }
+  .phone-notch {
+    width: 120px;
+    height: 28px;
+    background: #000;
+    border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+  .phone-content {
+    padding: 0 20px 20px;
+  }
+
+  /* ========== STATUS BAR ========== */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 24px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .status-bar-icons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 11px;
+  }
+
+  /* ========== BOTTOM NAV ========== */
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-primary);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .nav-item.active {
+    color: var(--near-green);
+  }
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  /* ========== COMMON COMPONENTS ========== */
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--near-green);
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--border-light);
+    background: var(--bg-card);
+  }
+
+  .btn-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--near-green-dim);
+    color: var(--near-green);
+    border: 1px solid var(--near-green-mid);
+  }
+  .badge.human {
+    background: rgba(68,136,255,0.15);
+    color: var(--blue);
+    border-color: rgba(68,136,255,0.3);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    transition: all 0.2s;
+  }
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-light);
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--near-green), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    flex-shrink: 0;
+  }
+  .avatar-sm {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+  .avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 32px;
+  }
+
+  .link-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .link-block:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--near-green-mid);
+    transform: translateY(-1px);
+  }
+  .link-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .link-block-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .link-block-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .link-block-url {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .link-arrow {
+    color: var(--text-tertiary);
+    font-size: 14px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .section-header {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin: 20px 0 12px;
+  }
+
+  .glow-ring {
+    box-shadow: 0 0 0 3px var(--near-green-dim), 0 0 20px var(--near-green-dim);
+  }
+
+  /* ========== SCREEN SPECIFIC ========== */
+
+  /* A1 Landing */
+  .landing-hero {
+    text-align: center;
+    padding: 24px 0 20px;
+  }
+  .landing-hero .received-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .landing-hero .received-name {
+    color: var(--near-green);
+    font-weight: 600;
+  }
+  .landing-hero .avatar {
+    margin: 0 auto 12px;
+  }
+  .landing-hero .name {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .landing-hero .title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+  .landing-hero .near-id {
+    font-size: 12px;
+    color: var(--near-green);
+    font-weight: 500;
+    margin-top: 6px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .badges-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .links-section { margin-top: 8px; }
+  .links-section .link-block { margin-bottom: 8px; }
+  .landing-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+    padding-bottom: 12px;
+  }
+
+  /* B1 Home */
+  .home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0 12px;
+  }
+  .home-menu { font-size: 22px; cursor: pointer; }
+  .home-notif {
+    position: relative;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .notif-badge {
+    position: absolute;
+    top: -4px; right: -6px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--danger);
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .my-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .my-card::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    left: -20%;
+    width: 140%;
+    height: 100%;
+    background: radial-gradient(ellipse, var(--near-green-dim) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .my-card .avatar { margin: 0 auto 12px; position: relative; }
+  .my-card .name { font-size: 18px; font-weight: 700; position: relative; }
+  .my-card .title { font-size: 12px; color: var(--text-secondary); margin-top: 2px; position: relative; }
+  .my-card .near-id { font-size: 12px; color: var(--near-green); font-weight: 500; margin-top: 6px; font-family: monospace; position: relative; }
+
+  .home-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .home-actions button {
+    flex: 1;
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .today-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .stat-value.green { color: var(--near-green); }
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* B2 Contacts */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px 0 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .filter-chip.active {
+    background: var(--near-green);
+    color: #000;
+    border-color: var(--near-green);
+    font-weight: 600;
+  }
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .contact-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-light);
+  }
+  .contact-info { flex: 1; min-width: 0; }
+  .contact-name {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .contact-name .online {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--near-green);
+  }
+  .contact-title {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .contact-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 36px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  .search-input:focus {
+    border-color: var(--near-green);
+  }
+  .search-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .search-wrap::before {
+    content: '\1F50D';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+  }
+
+  /* C1 Share */
+  .qr-area {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .qr-grid {
+    display: grid;
+    grid-template-columns: repeat(11,1fr);
+    gap: 2px;
+    width: 150px;
+    height: 150px;
+  }
+  .qr-cell {
+    border-radius: 1px;
+  }
+  .qr-cell.dark { background: #000; }
+  .qr-cell.light { background: #fff; }
+  .share-options {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .share-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .share-option:hover {
+    border-color: var(--near-green);
+    color: var(--near-green);
+  }
+  .share-option .icon { font-size: 22px; }
+
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .toggle-label {
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .toggle {
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--border-light);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--near-green); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--white);
+    top: 2px; left: 2px;
+    transition: transform 0.2s;
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* C3 Exchange Complete */
+  .complete-header {
+    text-align: center;
+    padding: 32px 0 24px;
+  }
+  .complete-sparkle {
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .complete-title {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--near-green), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .handshake-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .handshake-line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--near-green), var(--blue));
+    border-radius: 1px;
+  }
+  .sbt-card {
+    background: linear-gradient(135deg, rgba(0,236,151,0.08), rgba(68,136,255,0.08));
+    border: 1px solid var(--near-green-mid);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin: 16px 0;
+  }
+  .sbt-card .sbt-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .sbt-card .sbt-id {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--near-green);
+  }
+  .sbt-detail {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+  }
+  .sbt-detail .label { color: var(--text-tertiary); }
+  .sbt-detail .value { font-weight: 500; }
+  .sbt-detail a {
+    color: var(--near-green);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .near-received {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--near-green-dim);
+    border: 1px solid var(--near-green-mid);
+    border-radius: var(--radius-md);
+    margin: 12px 0;
+  }
+  .near-amount {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--near-green);
+  }
+  .near-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .action-btn:hover {
+    border-color: var(--near-green);
+    color: var(--near-green);
+  }
+
+  /* D2 Link Hub Editor */
+  .editor-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 6px;
+    cursor: grab;
+    transition: all 0.2s;
+  }
+  .editor-link:hover {
+    border-color: var(--border-light);
+  }
+  .drag-handle {
+    color: var(--text-tertiary);
+    font-size: 16px;
+    cursor: grab;
+    user-select: none;
+  }
+  .editor-link-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .editor-link-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .editor-link-sub {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 1px;
+  }
+  .editor-more {
+    color: var(--text-tertiary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .add-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    border: 1px dashed var(--border-light);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--near-green);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .add-link-btn:hover {
+    border-color: var(--near-green);
+    background: var(--near-green-dim);
+  }
+
+  .link-types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .link-type-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .link-type-chip:hover {
+    border-color: var(--near-green);
+    color: var(--near-green);
+  }
+
+  /* F1 Event */
+  .event-hero {
+    background: linear-gradient(135deg, rgba(0,236,151,0.1), rgba(153,102,255,0.08));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .event-name {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .event-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+  .event-sponsors {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .sponsor-tag {
+    padding: 4px 10px;
+    background: var(--bg-input);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .perk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .perk-icon { font-size: 20px; flex-shrink: 0; }
+  .perk-text { font-size: 13px; color: var(--text-secondary); }
+  .perk-text strong { color: var(--text-primary); font-weight: 600; }
+
+  /* G1 Wallet */
+  .wallet-balance {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .wallet-account {
+    font-size: 13px;
+    color: var(--near-green);
+    font-family: monospace;
+    font-weight: 500;
+  }
+  .wallet-amount {
+    font-size: 36px;
+    font-weight: 800;
+    margin-top: 8px;
+    background: linear-gradient(135deg, var(--text-primary), var(--near-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .wallet-usd {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+  .breakdown-row .label { color: var(--text-secondary); }
+  .breakdown-row .value { font-weight: 600; color: var(--text-primary); }
+
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+  }
+  .tx-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .tx-icon.in {
+    background: rgba(0,236,151,0.12);
+    color: var(--near-green);
+  }
+  .tx-icon.out {
+    background: rgba(255,68,102,0.12);
+    color: var(--danger);
+  }
+  .tx-icon.reward {
+    background: rgba(255,179,68,0.12);
+    color: var(--warning);
+  }
+  .tx-info { flex: 1; }
+  .tx-name { font-size: 13px; font-weight: 500; }
+  .tx-date { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+  .tx-amount { font-size: 13px; font-weight: 600; }
+  .tx-amount.positive { color: var(--near-green); }
+  .tx-amount.negative { color: var(--danger); }
+
+  .token-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .token-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* Multi-screen layout for wider viewports */
+  @media (min-width: 900px) {
+    .screens-row {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .screen-pair {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<header class="page-header">
+  <h1>NEAR Digital Card</h1>
+  <p>Screen Previews &mdash; nearlegion.com inspired dark theme</p>
+  <nav class="page-nav">
+    <a href="#a1">A1 Landing</a>
+    <a href="#b1">B1 Home</a>
+    <a href="#b2">B2 Contacts</a>
+    <a href="#c1">C1 Share</a>
+    <a href="#c3">C3 Complete</a>
+    <a href="#d2">D2 Link Editor</a>
+    <a href="#f1">F1 Event</a>
+    <a href="#g1">G1 Wallet</a>
+  </nav>
+</header>
+
+
+<!-- ========== A1: LANDING ========== -->
+<section class="screen-section" id="a1">
+  <div class="screen-label">A1 Onboarding</div>
+  <div class="screen-title">Landing</div>
+  <div class="screen-desc">QR/NFCタップ後に表示される最初の画面。アカウント不要で名刺＋Link Hubを閲覧可能。</div>
+
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <span>&#9679;&#9679;&#9679;&#9679;</span>
+        <span style="margin-left:4px">&#128267;</span>
+      </div>
+    </div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+
+      <div class="landing-hero">
+        <div class="received-text">
+          <span class="received-name">alice.near</span> さんから名刺が届きました
+        </div>
+        <div class="avatar avatar-lg glow-ring">AT</div>
+        <div class="name">Alice Tanaka</div>
+        <div class="title">BD Lead @ NEAR Japan</div>
+        <div class="near-id">alice.near</div>
+        <div class="badges-row">
+          <span class="badge human">&#10003; I-AM-HUMAN</span>
+          <span class="badge">&#9889; Legion Lv.5</span>
+        </div>
+      </div>
+
+      <div class="section-header">Alice's Links</div>
+      <div class="links-section">
+        <div class="link-block">
+          <div class="link-icon" style="background:rgba(29,161,242,0.15);color:#1DA1F2;">&#120143;</div>
+          <div class="link-block-text">
+            <div class="link-block-title">Twitter / X</div>
+            <div class="link-block-url">@alice_near</div>
+          </div>
+          <span class="link-arrow">&rsaquo;</span>
+        </div>
+        <div class="link-block">
+          <div class="link-icon" style="background:rgba(0,136,204,0.15);color:#0088cc;">&#9992;</div>
+          <div class="link-block-text">
+            <div class="link-block-title">Telegram</div>
+            <div class="link-block-url">@alice_bd</div>
+          </div>
+          <span class="link-arrow">&rsaquo;</span>
+        </div>
+        <div class="link-block">
+          <div class="link-icon" style="background:rgba(255,0,0,0.12);color:#FF4444;">&#9654;</div>
+          <div class="link-block-text">
+            <div class="link-block-title">Product Demo</div>
+            <div class="link-block-url">YouTube</div>
+          </div>
+          <span class="link-arrow">&rsaquo;</span>
+        </div>
+        <div class="link-block">
+          <div class="link-icon" style="background:rgba(255,179,68,0.12);color:#FFB344;">&#128196;</div>
+          <div class="link-block-text">
+            <div class="link-block-title">Pitch Deck</div>
+            <div class="link-block-url">PDF &middot; 2.4 MB</div>
+          </div>
+          <span class="link-arrow">&rsaquo;</span>
+        </div>
+        <div class="link-block">
+          <div class="link-icon" style="background:var(--near-green-dim);color:var(--near-green);">&#9741;</div>
+          <div class="link-block-text">
+            <div class="link-block-title">My dApp</div>
+            <div class="link-block-url">app.alice-tanaka.near</div>
+          </div>
+          <span class="link-arrow">&rsaquo;</span>
+        </div>
+      </div>
+
+      <div class="landing-actions">
+        <button class="btn-primary">&#128100; 連絡先を保存する</button>
+        <button class="btn-secondary" style="border-color:var(--near-green);color:var(--near-green);">
+          &#9889; アカウント作成して名刺を交換する
+        </button>
+        <div style="text-align:center;font-size:11px;color:var(--text-tertiary);margin-top:4px;">
+          アプリ不要 &middot; メールだけでOK &middot; 0.01 NEAR がもらえる
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== B1: HOME ========== -->
+<section class="screen-section" id="b1">
+  <div class="screen-label">B1 Home</div>
+  <div class="screen-title">My Card + Link Hub</div>
+  <div class="screen-desc">自分の公開プロフィールとLink Hubのプレビュー。共有・編集のメインハブ。</div>
+
+  <div class="phone-frame" style="min-height:780px;">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+
+      <div class="home-header">
+        <span class="home-menu">&#9776;</span>
+        <span class="home-notif">
+          &#128276;
+          <span class="notif-badge">3</span>
+        </span>
+      </div>
+
+      <div class="my-card">
+        <div class="avatar glow-ring" style="margin:0 auto 12px;">BY</div>
+        <div class="name">Bob Yamada</div>
+        <div class="title">Smart Contract Dev</div>
+        <div class="near-id">bob.near</div>
+        <div class="badges-row" style="margin-top:10px;">
+          <span class="badge">&#9889; Legion Lv.3</span>
+          <span class="badge human">&#10003; HUMAN</span>
+        </div>
+
+        <div class="divider" style="margin:16px 0 12px;position:relative;"></div>
+
+        <div style="text-align:left;position:relative;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:10px;">Link Hub</div>
+          <div class="link-block" style="margin-bottom:6px;">
+            <div class="link-icon" style="background:rgba(29,161,242,0.15);color:#1DA1F2;width:28px;height:28px;font-size:14px;">&#120143;</div>
+            <div class="link-block-title" style="font-size:12px;">Twitter / X</div>
+            <span class="link-arrow">&rsaquo;</span>
+          </div>
+          <div class="link-block" style="margin-bottom:6px;">
+            <div class="link-icon" style="background:rgba(0,136,204,0.15);color:#0088cc;width:28px;height:28px;font-size:14px;">&#9992;</div>
+            <div class="link-block-title" style="font-size:12px;">Telegram</div>
+            <span class="link-arrow">&rsaquo;</span>
+          </div>
+          <div class="link-block" style="margin-bottom:6px;">
+            <div class="link-icon" style="background:rgba(100,100,100,0.15);color:#aaa;width:28px;height:28px;font-size:14px;">&#128025;</div>
+            <div class="link-block-title" style="font-size:12px;">GitHub</div>
+            <span class="link-arrow">&rsaquo;</span>
+          </div>
+          <div class="link-block" style="margin-bottom:6px;">
+            <div class="link-icon" style="background:var(--near-green-dim);color:var(--near-green);width:28px;height:28px;font-size:14px;">&#9741;</div>
+            <div class="link-block-title" style="font-size:12px;">My dApp</div>
+            <span class="link-arrow">&rsaquo;</span>
+          </div>
+          <div class="link-block" style="margin-bottom:6px;">
+            <div class="link-icon" style="background:rgba(0,236,151,0.15);color:var(--near-green);width:28px;height:28px;font-size:14px;">&#9830;</div>
+            <div class="link-block-title" style="font-size:12px;">Tip me in NEAR</div>
+            <span class="link-arrow">&rsaquo;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-actions">
+        <button class="btn-primary" style="font-size:13px;">&#128260; Share</button>
+        <button class="btn-secondary" style="font-size:13px;">&#9998; Edit</button>
+      </div>
+
+      <div class="today-stats">
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Received</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Sent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value green">+0.03</div>
+          <div class="stat-label">NEAR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active"><span class="nav-icon">&#127183;</span><span>Card</span></div>
+      <div class="nav-item"><span class="nav-icon">&#128101;</span><span>Contacts</span></div>
+      <div class="nav-item"><span class="nav-icon">&#128197;</span><span>Events</span></div>
+      <div class="nav-item"><span class="nav-icon">&#9881;</span><span>Settings</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== B2: CONTACTS ========== -->
+<section class="screen-section" id="b2">
+  <div class="screen-label">B2 Home</div>
+  <div class="screen-title">Contact List</div>
+  <div class="screen-desc">交換した人の一覧。フィルタ・検索・タグで管理。</div>
+
+  <div class="phone-frame" style="min-height:760px;">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div style="padding:16px 0 8px;font-size:18px;font-weight:700;">Contacts</div>
+
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="Search by name, title, tag...">
+      </div>
+
+      <div class="filter-row">
+        <span class="filter-chip active">All</span>
+        <span class="filter-chip">Today</span>
+        <span class="filter-chip">By Event</span>
+        <span class="filter-chip">Tags</span>
+        <span class="filter-chip">SBT Only</span>
+      </div>
+
+      <div class="section-header" style="margin-top:4px;">NEAR AI Summit 2026</div>
+
+      <div class="contact-card">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#00EC97,#4488FF);">AT</div>
+        <div class="contact-info">
+          <div class="contact-name"><span class="online"></span>Alice Tanaka</div>
+          <div class="contact-title">BD Lead @ NEAR Japan</div>
+          <div class="contact-meta">
+            <span>alice.near</span>
+            <span>&middot;</span>
+            <span>2/12 14:32</span>
+            <span>&middot;</span>
+            <span style="color:var(--near-green);">&#9830; 0.01</span>
+          </div>
+        </div>
+        <span style="color:var(--text-tertiary);font-size:14px;">&rsaquo;</span>
+      </div>
+
+      <div class="contact-card">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#9966FF,#FF4466);">CK</div>
+        <div class="contact-info">
+          <div class="contact-name"><span class="online"></span>Charlie Kim</div>
+          <div class="contact-title">Founder @ DeFi Labs</div>
+          <div class="contact-meta">
+            <span>charlie.near</span>
+            <span>&middot;</span>
+            <span>2/12 15:10</span>
+            <span>&middot;</span>
+            <span style="color:var(--near-green);">&#9830; 0.01</span>
+          </div>
+        </div>
+        <span style="color:var(--text-tertiary);font-size:14px;">&rsaquo;</span>
+      </div>
+
+      <div class="contact-card">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#FFB344,#FF4466);">EC</div>
+        <div class="contact-info">
+          <div class="contact-name"><span class="online"></span>Eve Chen</div>
+          <div class="contact-title">AI Researcher</div>
+          <div class="contact-meta">
+            <span>eve.near</span>
+            <span>&middot;</span>
+            <span>2/12 16:05</span>
+            <span>&middot;</span>
+            <span style="color:var(--near-green);">&#9830; 0.01</span>
+          </div>
+        </div>
+        <span style="color:var(--text-tertiary);font-size:14px;">&rsaquo;</span>
+      </div>
+
+      <div class="contact-card" style="opacity:0.6;">
+        <div class="avatar avatar-sm" style="background:var(--border-light);color:var(--text-tertiary);">DM</div>
+        <div class="contact-info">
+          <div class="contact-name">Dave Miller</div>
+          <div class="contact-title">Marketing @ Web3 Inc</div>
+          <div class="contact-meta">
+            <span style="color:var(--text-tertiary);">vCard only</span>
+          </div>
+        </div>
+        <span style="color:var(--text-tertiary);font-size:14px;">&rsaquo;</span>
+      </div>
+
+      <div style="text-align:center;padding:16px 0;font-size:12px;color:var(--text-tertiary);">
+        Total: 47 &middot; On-chain: 31
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item"><span class="nav-icon">&#127183;</span><span>Card</span></div>
+      <div class="nav-item active"><span class="nav-icon">&#128101;</span><span>Contacts</span></div>
+      <div class="nav-item"><span class="nav-icon">&#128197;</span><span>Events</span></div>
+      <div class="nav-item"><span class="nav-icon">&#9881;</span><span>Settings</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== C1: SHARE ========== -->
+<section class="screen-section" id="c1">
+  <div class="screen-label">C1 Exchange</div>
+  <div class="screen-title">Share Your Card</div>
+  <div class="screen-desc">QRコード・NFC・リンクで名刺を共有。共有情報を選択可能。</div>
+
+  <div class="phone-frame">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div style="padding:16px 0 0;">
+        <div style="font-size:18px;font-weight:700;text-align:center;">Share Your Card</div>
+        <div style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:4px;">名刺を共有する</div>
+      </div>
+
+      <div class="qr-area">
+        <!-- Stylized QR representation -->
+        <div style="width:150px;height:150px;position:relative;">
+          <svg viewBox="0 0 150 150" width="150" height="150">
+            <!-- QR corner patterns -->
+            <rect x="5" y="5" width="35" height="35" rx="4" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="12" y="12" width="21" height="21" rx="2" fill="#000"/>
+            <rect x="110" y="5" width="35" height="35" rx="4" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="117" y="12" width="21" height="21" rx="2" fill="#000"/>
+            <rect x="5" y="110" width="35" height="35" rx="4" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="12" y="117" width="21" height="21" rx="2" fill="#000"/>
+            <!-- Data modules -->
+            <rect x="50" y="10" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="60" y="10" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="80" y="10" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="50" y="20" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="70" y="20" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="90" y="20" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="60" y="30" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="80" y="30" width="6" height="6" rx="1" fill="#000"/>
+            <!-- Center NEAR icon area -->
+            <rect x="55" y="55" width="40" height="40" rx="8" fill="#00EC97"/>
+            <text x="75" y="80" text-anchor="middle" fill="#000" font-size="18" font-weight="800" font-family="Inter,sans-serif">N</text>
+            <!-- More data modules -->
+            <rect x="10" y="50" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="20" y="60" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="30" y="50" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="10" y="70" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="110" y="50" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="120" y="60" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="130" y="50" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="130" y="70" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="50" y="100" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="60" y="110" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="70" y="100" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="80" y="110" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="110" y="110" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="120" y="120" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="130" y="130" width="6" height="6" rx="1" fill="#000"/>
+            <rect x="90" y="130" width="6" height="6" rx="1" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="share-options">
+        <div class="share-option">
+          <span class="icon">&#128241;</span>
+          NFC
+        </div>
+        <div class="share-option">
+          <span class="icon">&#128279;</span>
+          Copy Link
+        </div>
+        <div class="share-option">
+          <span class="icon">&#128228;</span>
+          SNS Share
+        </div>
+      </div>
+
+      <div class="section-header">Share Settings</div>
+      <div class="toggle-row">
+        <span class="toggle-label">&#128100; Name & Title</span>
+        <div class="toggle on"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">&#128279; Link Hub</span>
+        <div class="toggle on"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">&#9830; NEAR Account</span>
+        <div class="toggle on"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">&#9993; Email</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">&#128222; Phone</span>
+        <div class="toggle"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== C3: EXCHANGE COMPLETE ========== -->
+<section class="screen-section" id="c3">
+  <div class="screen-label">C3 Exchange</div>
+  <div class="screen-title">Exchange Complete</div>
+  <div class="screen-desc">交換完了。SBT発行 + 0.01 NEAR受取の確認画面。</div>
+
+  <div class="phone-frame">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+
+      <div class="complete-header">
+        <div class="complete-sparkle">&#10024;</div>
+        <div class="complete-title">Connected!</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">接続完了</div>
+      </div>
+
+      <div class="handshake-visual">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#00EC97,#4488FF);">AT</div>
+        <div class="handshake-line"></div>
+        <span style="font-size:24px;">&#129309;</span>
+        <div class="handshake-line"></div>
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#9966FF,#00EC97);">BY</div>
+      </div>
+
+      <div class="sbt-card">
+        <div class="sbt-header">
+          <span style="font-size:20px;">&#127915;</span>
+          <span class="sbt-id">Connection SBT #1847</span>
+        </div>
+        <div class="sbt-detail">
+          <span class="label">Issued</span>
+          <span class="value">2026-02-12 14:32</span>
+        </div>
+        <div class="sbt-detail">
+          <span class="label">Location</span>
+          <span class="value">NEAR AI Summit</span>
+        </div>
+        <div class="sbt-detail">
+          <span class="label">Tx</span>
+          <a href="#">4xK2...mN9q &#8599;</a>
+        </div>
+      </div>
+
+      <div class="near-received">
+        <span style="font-size:20px;">&#9830;</span>
+        <div>
+          <div class="near-amount">+0.01 NEAR</div>
+          <div class="near-label">Received &middot; Balance: 0.05 NEAR</div>
+        </div>
+      </div>
+
+      <div class="section-header">What's Next</div>
+      <div class="action-row">
+        <div class="action-btn">&#128172; Message</div>
+        <div class="action-btn">&#127991; Tag</div>
+        <div class="action-btn">&#128221; Note</div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-secondary">&#8592; Back to Home</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== D2: LINK HUB EDITOR ========== -->
+<section class="screen-section" id="d2">
+  <div class="screen-label">D2 Edit</div>
+  <div class="screen-title">Link Hub Editor</div>
+  <div class="screen-desc">リンクの追加・並べ替え・設定。ドラッグ＆ドロップで順序変更。</div>
+
+  <div class="phone-frame" style="min-height:800px;">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div style="padding:16px 0 4px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:14px;color:var(--text-secondary);cursor:pointer;">&#8592; Back</span>
+        <span style="font-size:16px;font-weight:700;">Edit Link Hub</span>
+        <span style="font-size:13px;color:var(--near-green);font-weight:600;cursor:pointer;">Save</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-bottom:16px;">
+        ドラッグで並べ替え &middot; タップで編集
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(29,161,242,0.15);color:#1DA1F2;width:30px;height:30px;font-size:14px;">&#120143;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">Twitter / X</div>
+          <div class="editor-link-sub">@bob_near</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(0,136,204,0.15);color:#0088cc;width:30px;height:30px;font-size:14px;">&#9992;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">Telegram</div>
+          <div class="editor-link-sub">@bobdev</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(100,100,100,0.15);color:#aaa;width:30px;height:30px;font-size:14px;">&#128025;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">GitHub</div>
+          <div class="editor-link-sub">bob-near</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(255,0,0,0.12);color:#FF4444;width:30px;height:30px;font-size:14px;">&#9654;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">Product Demo</div>
+          <div class="editor-link-sub">YouTube link</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(255,179,68,0.12);color:#FFB344;width:30px;height:30px;font-size:14px;">&#128196;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">Pitch Deck</div>
+          <div class="editor-link-sub">PDF &middot; Uploaded file</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:var(--near-green-dim);color:var(--near-green);width:30px;height:30px;font-size:14px;">&#9741;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">My dApp</div>
+          <div class="editor-link-sub">app.example.near</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(153,102,255,0.12);color:#9966FF;width:30px;height:30px;font-size:14px;">&#127912;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">NFT Collection</div>
+          <div class="editor-link-sub">Mintbase gallery</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <div class="editor-link">
+        <span class="drag-handle">&#9776;</span>
+        <div class="link-icon" style="background:rgba(0,236,151,0.12);color:var(--near-green);width:30px;height:30px;font-size:14px;">&#9830;</div>
+        <div class="editor-link-info">
+          <div class="editor-link-name">Tip me in NEAR</div>
+          <div class="editor-link-sub">NEAR payment button</div>
+        </div>
+        <span class="editor-more">&hellip;</span>
+      </div>
+
+      <button class="add-link-btn">&#43; Add Link / リンク追加</button>
+
+      <div class="section-header" style="margin-top:20px;">Link Types</div>
+      <div class="link-types">
+        <div class="link-type-chip">&#127760; URL</div>
+        <div class="link-type-chip">&#128196; File</div>
+        <div class="link-type-chip">&#9939; On-chain</div>
+        <div class="link-type-chip">&#128197; Booking</div>
+        <div class="link-type-chip">&#9830; Payment</div>
+        <div class="link-type-chip">&#128221; Text</div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-primary">Preview / プレビュー</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== F1: EVENT ========== -->
+<section class="screen-section" id="f1">
+  <div class="screen-label">F1 Event</div>
+  <div class="screen-title">Event Registration</div>
+  <div class="screen-desc">イベント参加登録画面。参加特典と参加者数を表示。</div>
+
+  <div class="phone-frame">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div style="padding:16px 0 4px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;color:var(--text-secondary);cursor:pointer;">&#8592;</span>
+        <span style="font-size:16px;font-weight:700;">Events</span>
+      </div>
+
+      <div class="event-hero">
+        <div style="font-size:22px;margin-bottom:6px;">&#127914;</div>
+        <div class="event-name">NEAR AI Summit 2026</div>
+        <div class="event-detail">&#128197; 2026-02-12</div>
+        <div class="event-detail">&#128205; Tokyo, Japan</div>
+        <div class="event-detail">&#128101; <strong style="color:var(--text-primary);">320</strong>&nbsp;registered</div>
+        <div class="event-sponsors">
+          <span class="sponsor-tag">NEAR Foundation</span>
+          <span class="sponsor-tag">Ref Finance</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="margin-top:4px;">&#10003; Join This Event</button>
+
+      <div class="section-header" style="margin-top:24px;">What You Get</div>
+
+      <div class="perk-item">
+        <span class="perk-icon">&#127915;</span>
+        <div class="perk-text">
+          <strong>Attendance Proof SBT</strong><br>
+          参加証明SBTが発行されます
+        </div>
+      </div>
+      <div class="perk-item">
+        <span class="perk-icon">&#9830;</span>
+        <div class="perk-text">
+          <strong>0.01 NEAR per exchange</strong><br>
+          名刺交換ごとにプールから送金（最大50回）
+        </div>
+      </div>
+      <div class="perk-item">
+        <span class="perk-icon">&#127942;</span>
+        <div class="perk-text">
+          <strong>Badges & Quests</strong><br>
+          交換数に応じてバッジを獲得
+        </div>
+      </div>
+
+      <div class="divider" style="margin:20px 0;"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;color:var(--text-tertiary);">Transfer Pool</span>
+        <span style="font-size:13px;font-weight:600;color:var(--near-green);">4.82 / 5.00 NEAR</span>
+      </div>
+      <div style="margin-top:6px;height:6px;background:var(--bg-input);border-radius:3px;overflow:hidden;">
+        <div style="width:96%;height:100%;background:var(--near-green);border-radius:3px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ========== G1: WALLET ========== -->
+<section class="screen-section" id="g1">
+  <div class="screen-label">G1 Settings</div>
+  <div class="screen-title">Wallet</div>
+  <div class="screen-desc">NEAR残高・取引履歴・保有SBT/NFTの一覧。</div>
+
+  <div class="phone-frame" style="min-height:760px;">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><span>&#9679;&#9679;&#9679;&#9679;</span><span style="margin-left:4px">&#128267;</span></div></div>
+    <div class="phone-notch"></div>
+    <div class="phone-content">
+      <div style="padding:16px 0 4px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;color:var(--text-secondary);cursor:pointer;">&#8592;</span>
+        <span style="font-size:16px;font-weight:700;">Wallet</span>
+      </div>
+
+      <div class="wallet-balance">
+        <div class="wallet-account">bob.near</div>
+        <div class="wallet-amount">0.15 NEAR</div>
+        <div class="wallet-usd">&asymp; $0.45</div>
+      </div>
+
+      <div class="card" style="padding:14px;">
+        <div class="breakdown-row">
+          <span class="label">From exchanges</span>
+          <span class="value">0.12 NEAR</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Quest rewards</span>
+          <span class="value">0.03 NEAR</span>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:20px;">Recent Transactions</div>
+
+      <div class="tx-item">
+        <div class="tx-icon in">&#8595;</div>
+        <div class="tx-info">
+          <div class="tx-name">alice.near</div>
+          <div class="tx-date">2/12 14:32</div>
+        </div>
+        <div class="tx-amount positive">+0.01</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-icon out">&#8593;</div>
+        <div class="tx-info">
+          <div class="tx-name">charlie.near</div>
+          <div class="tx-date">2/12 15:10</div>
+        </div>
+        <div class="tx-amount negative">-0.01</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-icon in">&#8595;</div>
+        <div class="tx-info">
+          <div class="tx-name">eve.near</div>
+          <div class="tx-date">2/12 16:05</div>
+        </div>
+        <div class="tx-amount positive">+0.01</div>
+      </div>
+      <div class="tx-item">
+        <div class="tx-icon reward">&#9733;</div>
+        <div class="tx-info">
+          <div class="tx-name">Quest reward</div>
+          <div class="tx-date">2/12 16:30</div>
+        </div>
+        <div class="tx-amount positive">+0.03</div>
+      </div>
+
+      <div class="section-header" style="margin-top:16px;">SBTs & NFTs</div>
+      <div class="token-grid">
+        <div class="token-item">&#127915; Connection SBTs &times;12</div>
+        <div class="token-item">&#127942; Event Attendance &times;3</div>
+        <div class="token-item">&#127941; Quest Badges &times;2</div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-secondary">Use NEAR in other apps &rarr;</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item"><span class="nav-icon">&#127183;</span><span>Card</span></div>
+      <div class="nav-item"><span class="nav-icon">&#128101;</span><span>Contacts</span></div>
+      <div class="nav-item"><span class="nav-icon">&#128197;</span><span>Events</span></div>
+      <div class="nav-item active"><span class="nav-icon">&#9881;</span><span>Settings</span></div>
+    </div>
+  </div>
+</section>
+
+
+</body>
+</html>
