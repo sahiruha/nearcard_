@@ -20,9 +20,9 @@ NEAR Protocol上に構築されたブロックチェーンベースのデジタ�
 
 | サービス | URL |
 |---------|-----|
-| **Worker API** | https://nearcard-worker.<your-subdomain>.workers.dev |
-| **ヘルスチェック** | https://nearcard-worker.<your-subdomain>.workers.dev/health |
-| **NFCリダイレクト** | https://nearcard-worker.<your-subdomain>.workers.dev/c/{cardId} |
+| **Worker API** | https://nearcard-worker.nc-d2ec48ed.workers.dev |
+| **ヘルスチェック** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health |
+| **NFCリダイレクト** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} |
 
 ## ディレクトリ構成
 
@@ -109,7 +109,7 @@ NEXT_PUBLIC_CONTRACT_ID=sbt.nearharu.testnet
 NEXT_PUBLIC_NETWORK_ID=testnet
 
 # Cloudflare Worker API
-NEXT_PUBLIC_API_URL=https://nearcard-worker.<your-subdomain>.workers.dev
+NEXT_PUBLIC_API_URL=https://nearcard-worker.nc-d2ec48ed.workers.dev
 ```
 
 ### 4. Cloudflareリソースの作成（初回のみ）
@@ -218,7 +218,7 @@ NFCタグタップ → Worker GET /c/{cardId} → D1検索 → 302リダイレ�
 
 1. NFCタグに書き込むURL:
    ```
-   https://nearcard-worker.<your-subdomain>.workers.dev/c/nc_abc123
+   https://nearcard-worker.nc-d2ec48ed.workers.dev/c/nc_abc123
    ```
 2. ユーザーがNFCタグをスマホにタップ
 3. ブラウザが上記URLを開く → Workerが処理
@@ -253,9 +253,9 @@ NFCタグタップ → Worker GET /c/{cardId} → D1検索 → 302リダイレ�
 | 用途 | URL | 説明 |
 |-----|-----|------|
 | **Cloudflare Dashboard** | https://dash.cloudflare.com | Workers, D1, R2の管理 |
-| **Worker API** | https://nearcard-worker.<your-subdomain>.workers.dev | バックエンドAPI |
-| **ヘルスチェック** | https://nearcard-worker.<your-subdomain>.workers.dev/health | APIステータス確認 |
-| **NFCリダイレクト** | https://nearcard-worker.<your-subdomain>.workers.dev/c/{cardId} | NFCタグに書き込むURL |
+| **Worker API** | https://nearcard-worker.nc-d2ec48ed.workers.dev | バックエンドAPI |
+| **ヘルスチェック** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health | APIステータス確認 |
+| **NFCリダイレクト** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} | NFCタグに書き込むURL |
 | **開発サーバー（Worker）** | http://localhost:8787 | ローカルWorker |
 | **開発サーバー（Frontend）** | http://localhost:3000 | ローカルフロントエンド |
 
@@ -315,7 +315,7 @@ NFCタグタップ → Worker GET /c/{cardId} → D1検索 → 302リダイレ�
 NFCタグ（NTAG215等）に以下のURLをNDEF URIレコードとして書き込みます:
 
 ```
-https://nearcard-worker.<your-subdomain>.workers.dev/c/<card-id>
+https://nearcard-worker.nc-d2ec48ed.workers.dev/c/<card-id>
 ```
 
 **書き込みツール:**
