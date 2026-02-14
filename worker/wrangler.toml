@@ -3,7 +3,7 @@ main = "src/index.ts"
 compatibility_date = "2024-12-01"
 
 [vars]
-FRONTEND_URL = "https://nearcard.app"
+FRONTEND_URL = "https://nearcard-app.pages.dev"
 
 [[d1_databases]]
 binding = "DB"

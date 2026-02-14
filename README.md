@@ -14,12 +14,14 @@ NEAR Protocol上に構築されたブロックチェーンベースのデジタ�
 | バックエンドAPI | Cloudflare Workers (Hono) |
 | データベース | Cloudflare D1 (SQLite) |
 | ファイルストレージ | Cloudflare R2（アバター画像） |
+| フロントエンドホスティング | Cloudflare Pages |
 | ビルド形式 | 静的エクスポート (`output: "export"`) |
 
 ## デプロイ済みURL
 
 | サービス | URL |
 |---------|-----|
+| **フロントエンド** | https://nearcard-app.pages.dev |
 | **Worker API** | https://nearcard-worker.nc-d2ec48ed.workers.dev |
 | **ヘルスチェック** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health |
 | **NFCリダイレクト** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} |
