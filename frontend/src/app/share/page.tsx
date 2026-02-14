@@ -5,13 +5,22 @@ import { useWallet } from '@/components/providers/WalletProvider';
 import { QRCodeDisplay } from '@/components/exchange/QRCodeDisplay';
 import { Card } from '@/components/ui/Card';
 import { getProfile, encodeProfileForUrl } from '@/lib/profile';
-import type { Profile } from '@/lib/types';
-import { QrCode } from 'lucide-react';
+import { getCardsByAccount } from '@/lib/card-binding';
+import type { Profile, NfcCard } from '@/lib/types';
+import { QrCode, CreditCard, Zap, Copy, Check } from 'lucide-react';
 
 export default function SharePage() {
   const { accountId, isSignedIn } = useWallet();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [shareUrl, setShareUrl] = useState('');
+  const [nfcCards, setNfcCards] = useState<NfcCard[]>([]);
+  const [copied, setCopied] = useState(false);
+
+  const primaryCard = nfcCards[0] || null;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const nfcUrl = primaryCard
+    ? `${supabaseUrl}/functions/v1/card-redirect/${primaryCard.cardId}`
+    : null;
 
   useEffect(() => {
     if (accountId) {
@@ -22,8 +31,16 @@ export default function SharePage() {
         const url = `${window.location.origin}/card/view/?id=${accountId}&d=${encoded}`;
         setShareUrl(url);
       }
+      getCardsByAccount(accountId).then(setNfcCards).catch(() => {});
     }
   }, [accountId]);
+
+  const copyNfcUrl = async () => {
+    if (!nfcUrl) return;
+    await navigator.clipboard.writeText(nfcUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (!isSignedIn) {
     return (
@@ -56,6 +73,41 @@ export default function SharePage() {
         </div>
         {shareUrl && <QRCodeDisplay url={shareUrl} />}
       </Card>
+
+      {/* NFC Card Info */}
+      {primaryCard && nfcUrl && (
+        <Card className="p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-near-green-dim flex items-center justify-center">
+              <CreditCard size={14} className="text-near-green" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-text-primary">NFC Card</p>
+              <div className="flex items-center gap-1">
+                {primaryCard.isPartyMode && (
+                  <Zap size={10} className="text-near-green" />
+                )}
+                <p className="text-xs text-text-secondary">
+                  {primaryCard.isPartyMode
+                    ? `Party Mode - ${primaryCard.partyLinkLabel || 'Active'}`
+                    : 'Normal Mode - Shows your card'}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-3 py-2 bg-bg-input rounded-[var(--radius-md)] overflow-hidden">
+              <p className="text-xs text-text-tertiary truncate font-mono">{nfcUrl}</p>
+            </div>
+            <button
+              onClick={copyNfcUrl}
+              className="p-2 text-text-tertiary hover:text-near-green transition-colors cursor-pointer"
+            >
+              {copied ? <Check size={16} className="text-near-green" /> : <Copy size={16} />}
+            </button>
+          </div>
+        </Card>
+      )}
 
       <div className="text-center">
         <p className="text-xs text-text-tertiary">

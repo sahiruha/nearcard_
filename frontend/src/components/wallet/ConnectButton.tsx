@@ -34,7 +34,7 @@ export function ConnectButton() {
   }
 
   return (
-    <Button variant="primary" size="sm" onClick={signIn}>
+    <Button variant="primary" size="sm" onClick={() => signIn()}>
       <Wallet size={14} />
       Connect Wallet
     </Button>

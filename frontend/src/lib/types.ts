@@ -39,3 +39,26 @@ export interface ExchangeResult {
   event_name: string;
   transfer_amount: string;
 }
+
+// NFC Card Binding Types
+
+export interface NfcCard {
+  id: string;
+  cardId: string;
+  accountId: string | null;
+  displayName: string | null;
+  defaultUrl: string | null;
+  isPartyMode: boolean;
+  partyLinkUrl: string | null;
+  partyLinkLabel: string | null;
+  linkedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CardBindingStatus = 'unlinked' | 'linked';
+
+export interface PartyModeSettings {
+  isEnabled: boolean;
+  selectedLink: LinkItem | null;
+}

@@ -1,92 +1,98 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { setupWalletSelector, WalletSelector, actionCreators } from '@near-wallet-selector/core';
-import type { WalletModuleFactory } from '@near-wallet-selector/core';
-import { setupModal, WalletSelectorModal } from '@near-wallet-selector/modal-ui';
-import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet';
-import { setupMeteorWallet } from '@near-wallet-selector/meteor-wallet';
-import { setupHereWallet } from '@near-wallet-selector/here-wallet';
+import { NearConnector } from '@hot-labs/near-connect';
+import type { NearWalletBase } from '@hot-labs/near-connect';
 import { CONTRACT_ID, NETWORK_ID } from '@/lib/near';
 
-import '@near-wallet-selector/modal-ui/styles.css';
-
-const { functionCall } = actionCreators;
+type FinalExecutionOutcome = Awaited<ReturnType<NearWalletBase['signAndSendTransaction']>>;
 
 interface WalletContextType {
-  selector: WalletSelector | null;
-  modal: WalletSelectorModal | null;
+  connector: NearConnector | null;
   accountId: string | null;
   isSignedIn: boolean;
   isLoading: boolean;
-  signIn: () => void;
+  signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   callMethod: (params: {
     methodName: string;
     args?: Record<string, unknown>;
     gas?: string;
     deposit?: string;
-  }) => Promise<unknown>;
+  }) => Promise<FinalExecutionOutcome | undefined>;
 }
 
 const WalletContext = createContext<WalletContextType>({
-  selector: null,
-  modal: null,
+  connector: null,
   accountId: null,
   isSignedIn: false,
   isLoading: true,
-  signIn: () => {},
+  signIn: async () => {},
   signOut: async () => {},
-  callMethod: async () => null,
+  callMethod: async () => undefined,
 });
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [selector, setSelector] = useState<WalletSelector | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const modalRef = useRef<WalletSelectorModal | null>(null);
+  const connectorRef = useRef<NearConnector | null>(null);
+
+  if (typeof window !== 'undefined' && !connectorRef.current) {
+    connectorRef.current = new NearConnector({
+      network: NETWORK_ID as 'testnet' | 'mainnet',
+      autoConnect: true,
+    });
+  }
+
+  const connector = connectorRef.current;
 
   useEffect(() => {
-    setupWalletSelector({
-      network: NETWORK_ID as 'testnet' | 'mainnet',
-      modules: [
-        setupMyNearWallet() as unknown as WalletModuleFactory,
-        setupMeteorWallet() as unknown as WalletModuleFactory,
-        setupHereWallet() as unknown as WalletModuleFactory,
-      ],
-    }).then((sel) => {
-      const modal = setupModal(sel, { contractId: CONTRACT_ID });
-      modalRef.current = modal;
-      setSelector(sel);
+    if (!connector) return;
 
-      const state = sel.store.getState();
-      const accounts = state.accounts;
-      if (accounts.length > 0) {
-        setAccountId(accounts[0].accountId);
+    const onSignIn = (data: { accounts: { accountId: string }[] }) => {
+      if (data.accounts.length > 0) {
+        setAccountId(data.accounts[0].accountId);
       }
       setIsLoading(false);
+    };
 
-      sel.store.observable.subscribe((state) => {
-        const accounts = state.accounts;
+    const onSignOut = () => {
+      setAccountId(null);
+    };
+
+    connector.on('wallet:signIn', onSignIn);
+    connector.on('wallet:signOut', onSignOut);
+
+    // Restore existing connection
+    connector.getConnectedWallet()
+      .then(({ accounts }) => {
         if (accounts.length > 0) {
           setAccountId(accounts[0].accountId);
-        } else {
-          setAccountId(null);
         }
+      })
+      .catch(() => {
+        // No existing connection
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    });
-  }, []);
 
-  const signIn = useCallback(() => {
-    modalRef.current?.show();
-  }, []);
+    return () => {
+      connector.off('wallet:signIn', onSignIn);
+      connector.off('wallet:signOut', onSignOut);
+    };
+  }, [connector]);
+
+  const signIn = useCallback(async () => {
+    if (!connector) return;
+    await connector.connect();
+  }, [connector]);
 
   const signOut = useCallback(async () => {
-    if (!selector) return;
-    const wallet = await selector.wallet();
-    await wallet.signOut();
+    if (!connector) return;
+    await connector.disconnect();
     setAccountId(null);
-  }, [selector]);
+  }, [connector]);
 
   const callMethod = useCallback(
     async ({
@@ -99,25 +105,32 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       args?: Record<string, unknown>;
       gas?: string;
       deposit?: string;
-    }) => {
-      if (!selector) throw new Error('Wallet not initialized');
-      const wallet = await selector.wallet();
+    }): Promise<FinalExecutionOutcome | undefined> => {
+      if (!connector) throw new Error('Wallet not initialized');
+      const wallet = await connector.wallet();
       const result = await wallet.signAndSendTransaction({
         receiverId: CONTRACT_ID,
         actions: [
-          functionCall(methodName, args, BigInt(gas), BigInt(deposit)),
+          {
+            type: 'FunctionCall',
+            params: {
+              methodName,
+              args,
+              gas,
+              deposit,
+            },
+          },
         ],
       });
       return result;
     },
-    [selector],
+    [connector],
   );
 
   return (
     <WalletContext.Provider
       value={{
-        selector,
-        modal: modalRef.current,
+        connector,
         accountId,
         isSignedIn: !!accountId,
         isLoading,

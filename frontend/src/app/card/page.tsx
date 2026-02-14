@@ -1,29 +1,73 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWallet } from '@/components/providers/WalletProvider';
 import { CardPreview } from '@/components/card/CardPreview';
+import { PartyModeToggle } from '@/components/card/PartyModeToggle';
+import { PartyModeSettings } from '@/components/card/PartyModeSettings';
+import { NfcCardManager } from '@/components/card/NfcCardManager';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { getProfile } from '@/lib/profile';
 import { getSbtsByOwner } from '@/lib/near';
-import type { Profile, ConnectionSBT } from '@/lib/types';
-import { Plus, Share2, Edit, Shield } from 'lucide-react';
+import { getCardsByAccount, updatePartyMode } from '@/lib/card-binding';
+import type { Profile, ConnectionSBT, NfcCard, LinkItem } from '@/lib/types';
+import { Plus, Share2, Edit, Shield, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function MyCardPage() {
-  const { accountId, isSignedIn, isLoading } = useWallet();
+  const { accountId, isSignedIn, isLoading, signIn } = useWallet();
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [sbts, setSbts] = useState<ConnectionSBT[]>([]);
+  const [nfcCards, setNfcCards] = useState<NfcCard[]>([]);
+  const [showPartySettings, setShowPartySettings] = useState(false);
+  const [showNfcCards, setShowNfcCards] = useState(false);
+
+  // 現在パーティーモードが有効なカード（最初の1枚を使用）
+  const primaryCard = nfcCards[0] || null;
+
+  const loadNfcCards = useCallback(async () => {
+    if (!accountId) return;
+    const cards = await getCardsByAccount(accountId);
+    setNfcCards(cards);
+  }, [accountId]);
 
   useEffect(() => {
     if (accountId) {
       const p = getProfile(accountId);
       setProfile(p);
       getSbtsByOwner(accountId).then(setSbts).catch(() => {});
+      loadNfcCards();
     }
-  }, [accountId]);
+  }, [accountId, loadNfcCards]);
+
+  const handlePartyToggle = async (enabled: boolean) => {
+    if (!primaryCard || !accountId) return;
+
+    await updatePartyMode(
+      primaryCard.cardId,
+      accountId,
+      enabled,
+      primaryCard.partyLinkUrl,
+      primaryCard.partyLinkLabel
+    );
+    await loadNfcCards();
+  };
+
+  const handlePartyLinkSave = async (link: LinkItem) => {
+    if (!primaryCard || !accountId) return;
+
+    await updatePartyMode(
+      primaryCard.cardId,
+      accountId,
+      true,
+      link.url,
+      link.label || link.type
+    );
+    setShowPartySettings(false);
+    await loadNfcCards();
+  };
 
   if (isLoading) {
     return (
@@ -45,7 +89,7 @@ export default function MyCardPage() {
             Connect your wallet to create and share your blockchain-powered digital business card.
           </p>
         </div>
-        <Button onClick={() => router.push('/card')}>
+        <Button onClick={() => signIn()}>
           Connect Wallet to Start
         </Button>
       </div>
@@ -72,6 +116,20 @@ export default function MyCardPage() {
     );
   }
 
+  // パーティーモード設定画面
+  if (showPartySettings && profile.links.length > 0) {
+    return (
+      <div className="flex flex-col gap-6">
+        <PartyModeSettings
+          links={profile.links}
+          currentUrl={primaryCard?.partyLinkUrl || null}
+          onSave={handlePartyLinkSave}
+          onBack={() => setShowPartySettings(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Card Preview */}
@@ -91,6 +149,16 @@ export default function MyCardPage() {
         </Button>
       </div>
 
+      {/* Party Mode Toggle (NFCカードがある場合のみ表示) */}
+      {primaryCard && (
+        <PartyModeToggle
+          isEnabled={primaryCard.isPartyMode}
+          linkLabel={primaryCard.partyLinkLabel}
+          onToggle={handlePartyToggle}
+          onConfigure={() => setShowPartySettings(true)}
+        />
+      )}
+
       {/* Connection Stats */}
       {sbts.length > 0 && (
         <Card className="p-4">
@@ -107,6 +175,35 @@ export default function MyCardPage() {
             </div>
           </div>
         </Card>
+      )}
+
+      {/* NFC Cards Section */}
+      {nfcCards.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setShowNfcCards(!showNfcCards)}
+            className="flex items-center justify-between text-left cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <CreditCard size={14} className="text-text-tertiary" />
+              <span className="text-xs font-semibold text-text-secondary">
+                NFC Cards ({nfcCards.length})
+              </span>
+            </div>
+            {showNfcCards ? (
+              <ChevronUp size={14} className="text-text-tertiary" />
+            ) : (
+              <ChevronDown size={14} className="text-text-tertiary" />
+            )}
+          </button>
+          {showNfcCards && (
+            <NfcCardManager
+              cards={nfcCards}
+              accountId={accountId!}
+              onCardUnlinked={loadNfcCards}
+            />
+          )}
+        </div>
       )}
     </div>
   );
