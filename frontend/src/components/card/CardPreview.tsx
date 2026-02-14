@@ -1,6 +1,7 @@
 'use client';
 
 import type { Profile } from '@/lib/types';
+import { getApiBaseUrl } from '@/lib/api-client';
 import { LinkList } from './LinkList';
 
 interface CardPreviewProps {
@@ -16,12 +17,24 @@ export function CardPreview({ profile, showLinks = true }: CardPreviewProps) {
     .toUpperCase()
     .slice(0, 2);
 
+  const avatarUrl = profile.avatar
+    ? (profile.avatar.startsWith('http') ? profile.avatar : `${getApiBaseUrl()}${profile.avatar}`)
+    : null;
+
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Avatar */}
-      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-3xl font-bold text-black shrink-0">
-        {initials}
-      </div>
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt={profile.name}
+          className="w-20 h-20 rounded-full object-cover shrink-0"
+        />
+      ) : (
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-3xl font-bold text-black shrink-0">
+          {initials}
+        </div>
+      )}
 
       {/* Info */}
       <div className="text-center">

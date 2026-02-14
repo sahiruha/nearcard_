@@ -6,6 +6,7 @@ import { QRCodeDisplay } from '@/components/exchange/QRCodeDisplay';
 import { Card } from '@/components/ui/Card';
 import { getProfile, encodeProfileForUrl } from '@/lib/profile';
 import { getCardsByAccount } from '@/lib/card-binding';
+import { getApiBaseUrl } from '@/lib/api-client';
 import type { Profile, NfcCard } from '@/lib/types';
 import { QrCode, CreditCard, Zap, Copy, Check } from 'lucide-react';
 
@@ -17,9 +18,9 @@ export default function SharePage() {
   const [copied, setCopied] = useState(false);
 
   const primaryCard = nfcCards[0] || null;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const apiUrl = getApiBaseUrl();
   const nfcUrl = primaryCard
-    ? `${supabaseUrl}/functions/v1/card-redirect/${primaryCard.cardId}`
+    ? `${apiUrl}/c/${primaryCard.cardId}`
     : null;
 
   useEffect(() => {

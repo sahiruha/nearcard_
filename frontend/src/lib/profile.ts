@@ -1,3 +1,4 @@
+import { apiFetch, getApiBaseUrl } from './api-client';
 import type { Profile } from './types';
 
 const PROFILE_KEY_PREFIX = 'nearcard_profile_';
@@ -5,6 +6,9 @@ const PROFILE_KEY_PREFIX = 'nearcard_profile_';
 export function saveProfile(accountId: string, profile: Profile): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem(PROFILE_KEY_PREFIX + accountId, JSON.stringify(profile));
+
+  // fire-and-forget: D1にも保存
+  saveProfileAsync(accountId, profile).catch(() => {});
 }
 
 export function getProfile(accountId: string): Profile | null {
@@ -16,6 +20,23 @@ export function getProfile(accountId: string): Profile | null {
   } catch {
     return null;
   }
+}
+
+/** D1バックエンドにプロフィールを保存 */
+export async function saveProfileAsync(accountId: string, profile: Profile): Promise<void> {
+  await apiFetch(`/api/profiles/${encodeURIComponent(accountId)}`, {
+    method: 'PUT',
+    body: JSON.stringify(profile),
+  });
+}
+
+/** D1バックエンドからプロフィールを取得 */
+export async function getProfileAsync(accountId: string): Promise<Profile | null> {
+  const url = `${getApiBaseUrl()}/api/profiles/${encodeURIComponent(accountId)}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data as Profile | null;
 }
 
 export function encodeProfileForUrl(profile: Profile): string {

@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { getProfile, saveProfile, encodeProfileForUrl } from '@/lib/profile';
 import { getCardsByAccount, updatePartyMode, updateDefaultUrl } from '@/lib/card-binding';
+import { getApiBaseUrl } from '@/lib/api-client';
 import type { LinkItem, LinkType, NfcCard } from '@/lib/types';
-import { Plus, Trash2, ArrowLeft, CreditCard, Zap } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft, CreditCard, Zap, Camera } from 'lucide-react';
 import Link from 'next/link';
 
 const linkTypeOptions: { value: LinkType; label: string }[] = [
@@ -29,6 +30,7 @@ export default function EditCardPage() {
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [organization, setOrganization] = useState('');
+  const [avatar, setAvatar] = useState<string | undefined>(undefined);
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [nfcCards, setNfcCards] = useState<NfcCard[]>([]);
@@ -49,6 +51,7 @@ export default function EditCardPage() {
         setName(profile.name);
         setTitle(profile.title);
         setOrganization(profile.organization);
+        setAvatar(profile.avatar);
         setLinks(profile.links);
       }
       setLoaded(true);
@@ -70,6 +73,19 @@ export default function EditCardPage() {
     setLinks(updated);
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !accountId) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('accountId', accountId);
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/api/upload/avatar`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.avatarUrl) setAvatar(data.avatarUrl);
+    } catch { /* ignore */ }
+  };
+
   const handleSave = async () => {
     if (!accountId || !name.trim()) return;
 
@@ -77,6 +93,7 @@ export default function EditCardPage() {
       name: name.trim(),
       title: title.trim(),
       organization: organization.trim(),
+      avatar,
       nearAccount: accountId,
       links: links.filter((l) => l.url.trim()),
     };
@@ -138,6 +155,27 @@ export default function EditCardPage() {
           <ArrowLeft size={20} />
         </Link>
         <h1 className="text-lg font-bold">Edit Profile</h1>
+      </div>
+
+      {/* Avatar Upload */}
+      <div className="flex justify-center">
+        <label className="relative cursor-pointer group">
+          {avatar ? (
+            <img
+              src={avatar.startsWith('http') ? avatar : `${getApiBaseUrl()}${avatar}`}
+              alt="Avatar"
+              className="w-20 h-20 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-3xl font-bold text-black">
+              {name ? name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : '?'}
+            </div>
+          )}
+          <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Camera size={20} className="text-white" />
+          </div>
+          <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+        </label>
       </div>
 
       <div className="flex flex-col gap-4">

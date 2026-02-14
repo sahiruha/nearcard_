@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { CardPreview } from '@/components/card/CardPreview';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { decodeProfileFromUrl, downloadVCard, getProfile } from '@/lib/profile';
+import { decodeProfileFromUrl, downloadVCard, getProfile, getProfileAsync } from '@/lib/profile';
 import type { Profile } from '@/lib/types';
 import { Download, ArrowRightLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -16,21 +16,48 @@ function PublicCardContent() {
   const router = useRouter();
   const { isSignedIn, accountId } = useWallet();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
   const targetAccountId = searchParams.get('id') || '';
 
   useEffect(() => {
-    if (!targetAccountId) return;
+    if (!targetAccountId) {
+      setLoading(false);
+      return;
+    }
+
+    // 1. URLエンコードされたプロフィール
     const encoded = searchParams.get('d');
     if (encoded) {
       const decoded = decodeProfileFromUrl(encoded);
       if (decoded) {
         setProfile(decoded);
+        setLoading(false);
         return;
       }
     }
+
+    // 2. localStorageフォールバック
     const stored = getProfile(targetAccountId);
-    if (stored) setProfile(stored);
+    if (stored) {
+      setProfile(stored);
+      setLoading(false);
+      return;
+    }
+
+    // 3. D1バックエンドフォールバック
+    getProfileAsync(targetAccountId).then((p) => {
+      if (p) setProfile(p);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, [targetAccountId, searchParams]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-pulse text-text-secondary">Loading...</div>
+      </div>
+    );
+  }
 
   if (!targetAccountId || !profile) {
     return (
