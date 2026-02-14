@@ -332,17 +332,19 @@ https://nearcard-worker.nc-d2ec48ed.workers.dev/c/<card-id>
 
 ## ページ構成
 
-| ルート | 説明 | ウォレット必要 |
-|-------|------|:-----------:|
-| `/` | ランディング（`/card`にリダイレクト） | No |
-| `/card` | マイカード + パーティーモード + NFC管理 | Yes |
-| `/card/create` | プロフィール作成 + アバターアップロード | Yes |
-| `/card/edit` | プロフィール編集 + NFC Card Settings + アバター | Yes |
-| `/card/view` | 公開カードビュー (Level 0, D1フォールバック付き) | No |
-| `/share` | QRコード + NFC URL共有 | Yes |
-| `/exchange/confirm` | 名刺交換確認 | Yes |
-| `/exchange/complete` | 交換完了 | Yes |
-| `/c/register` | NFCカード登録 | Yes |
+| ページ | URL | 説明 | ウォレット必要 |
+|-------|-----|------|:-----------:|
+| トップ | https://nearcard-app.pages.dev/ | `/card`にリダイレクト | No |
+| マイカード | https://nearcard-app.pages.dev/card | パーティーモード + NFC管理 | Yes |
+| プロフィール作成 | https://nearcard-app.pages.dev/card/create | アバターアップロード対応 | Yes |
+| プロフィール編集 | https://nearcard-app.pages.dev/card/edit | NFC Card Settings + アバター | Yes |
+| 公開カードビュー | https://nearcard-app.pages.dev/card/view | Level 0、D1フォールバック付き | No |
+| シェア | https://nearcard-app.pages.dev/share | QRコード + NFC URL共有 | Yes |
+| 名刺交換確認 | https://nearcard-app.pages.dev/exchange/confirm | SBT発行 + 0.01 NEAR送金 | Yes |
+| 交換完了 | https://nearcard-app.pages.dev/exchange/complete | 結果表示 + Explorer リンク | Yes |
+| NFCカード登録 | https://nearcard-app.pages.dev/c/register | カード紐付け | Yes |
+| NFCリダイレクト | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} | Worker経由302リダイレクト | — |
+| ヘルスチェック | https://nearcard-worker.nc-d2ec48ed.workers.dev/health | APIステータス | — |
 
 ## Progressive Web3 設計
 
