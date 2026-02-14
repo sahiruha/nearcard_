@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWallet } from '@/components/providers/WalletProvider';
 import { CardPreview } from '@/components/card/CardPreview';
+import { LinkBlock } from '@/components/card/LinkBlock';
 import { PartyModeToggle } from '@/components/card/PartyModeToggle';
 import { PartyModeSettings } from '@/components/card/PartyModeSettings';
 import { NfcCardManager } from '@/components/card/NfcCardManager';
@@ -45,12 +46,18 @@ export default function MyCardPage() {
   const handlePartyToggle = async (enabled: boolean) => {
     if (!primaryCard || !accountId) return;
 
+    // ONにする時、リンクが未設定ならリンク選択画面を開く
+    if (enabled && !primaryCard.partyLinkUrl) {
+      setShowPartySettings(true);
+      return;
+    }
+
     await updatePartyMode(
       primaryCard.cardId,
       accountId,
       enabled,
-      primaryCard.partyLinkUrl,
-      primaryCard.partyLinkLabel
+      enabled ? primaryCard.partyLinkUrl : primaryCard.partyLinkUrl,
+      enabled ? primaryCard.partyLinkLabel : primaryCard.partyLinkLabel
     );
     await loadNfcCards();
   };
@@ -131,11 +138,44 @@ export default function MyCardPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Card Preview */}
-      <Card className="p-6">
-        <CardPreview profile={profile} />
-      </Card>
+    <div className="flex flex-col gap-5">
+      {/* My Card with glow effect */}
+      <div
+        className="relative overflow-hidden bg-bg-card border border-border rounded-[var(--radius-xl)] p-6 text-center"
+      >
+        {/* Radial glow background */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '-60%',
+            left: '-20%',
+            width: '140%',
+            height: '100%',
+            background: 'radial-gradient(ellipse, var(--near-green-dim) 0%, transparent 70%)',
+          }}
+        />
+
+        <div className="relative">
+          <CardPreview profile={profile} showLinks={false} />
+        </div>
+
+        {/* Divider + Link Hub */}
+        {profile.links.length > 0 && (
+          <div className="relative mt-4">
+            <div className="h-px bg-border mb-4" />
+            <div className="text-left">
+              <div className="text-[11px] font-semibold tracking-wider uppercase text-text-tertiary mb-3">
+                Link Hub
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {profile.links.map((link, i) => (
+                  <LinkBlock key={i} link={link} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Actions */}
       <div className="flex gap-3">
@@ -149,6 +189,24 @@ export default function MyCardPage() {
         </Button>
       </div>
 
+      {/* Today Stats */}
+      <div className="grid grid-cols-3 gap-2.5">
+        <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
+          <div className="text-xl font-bold text-text-primary">{sbts.length}</div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">Connections</div>
+        </div>
+        <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
+          <div className="text-xl font-bold text-text-primary">{nfcCards.length}</div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">NFC Cards</div>
+        </div>
+        <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
+          <div className="text-xl font-bold text-near-green">
+            +{(sbts.length * 0.01).toFixed(2)}
+          </div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">NEAR</div>
+        </div>
+      </div>
+
       {/* Party Mode Toggle (NFCカードがある場合のみ表示) */}
       {primaryCard && (
         <PartyModeToggle
@@ -157,24 +215,6 @@ export default function MyCardPage() {
           onToggle={handlePartyToggle}
           onConfigure={() => setShowPartySettings(true)}
         />
-      )}
-
-      {/* Connection Stats */}
-      {sbts.length > 0 && (
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-text-secondary">Connections (SBT)</p>
-              <p className="text-2xl font-bold text-near-green">{sbts.length}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-text-secondary">Latest</p>
-              <p className="text-sm text-text-primary">
-                {sbts[sbts.length - 1]?.event_name || 'Direct'}
-              </p>
-            </div>
-          </div>
-        </Card>
       )}
 
       {/* NFC Cards Section */}
