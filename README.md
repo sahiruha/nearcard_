@@ -13,6 +13,48 @@ Every card exchange automatically: / 名刺交換ごとに自動で:
 
 ---
 
+## Key Feature: Party Mode / 最大の特徴：パーティーモード
+
+### The Problem / 課題
+
+Existing digital business cards have a critical UX problem at events and parties:
+既存のデジタル名刺は、イベントやパーティーの場で致命的なUX問題を抱えています：
+
+> "Tap my card... now you see my profile... scroll down... see the links section? Click the third one, that's my X account..."
+>
+> 「カードをタップして...プロフィールが出るでしょ...下にスクロールして...リンクのところ見えます？上から3番目のがXのアカウントです...」
+
+In a noisy, fast-paced party environment, explaining how to navigate through a profile page to find the right social link kills the momentum of the conversation. By the time the other person finds your X or Instagram, the moment has passed.
+
+騒がしくてテンポの速いパーティー会場で、プロフィールページの操作を説明してSNSリンクを探させるのは、会話のテンポを台無しにします。相手がXやInstagramを見つけた頃には、話の流れは途切れています。
+
+### The Solution: One-Tap Direct Link / 解決策：ワンタップで直接リンク
+
+**Party Mode** eliminates this friction entirely. When enabled, tapping the NFC card **skips the profile page** and sends the recipient **directly to your chosen social account** — X, Instagram, Discord, Telegram, or any link you choose.
+
+**パーティーモード**はこの摩擦を完全に排除します。ONにすると、NFCカードをタップした瞬間、プロフィールページをスキップして、あなたが選んだSNSアカウント（X、Instagram、Discord、Telegram等）に**直接飛びます**。
+
+```
+Normal Mode:  NFC Tap → Profile Page → Scroll → Find Link → Click → Social Account
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                              ↑ This is the problem / ここが問題
+
+Party Mode:   NFC Tap → Social Account  ✅
+                        Done! / 完了！
+```
+
+- **Before the party / パーティー前:** Select which link to share (X, Instagram, etc.) — パーティー前に共有するリンクを選択
+- **During the party / パーティー中:** One tap, instant redirect. No explanation needed — ワンタップで即リダイレクト。説明不要
+- **After the party / パーティー後:** Turn off Party Mode to restore full profile view — パーティー後にOFFにすれば通常のプロフィール表示に戻る
+
+### NEAR Wallet Adoption / NEARウォレットの普及
+
+To use NearCard, users connect a **NEAR Wallet**. This creates a natural onboarding funnel: every card exchange, every NFC tap, every profile share becomes an opportunity to bring new users into the NEAR ecosystem. As NearCard spreads at events and conferences, so does NEAR wallet adoption.
+
+NearCardを使うには**NEARウォレット**の接続が必要です。これにより、名刺交換のたびに、NFCタップのたびに、プロフィール共有のたびに、新しいユーザーをNEARエコシステムに呼び込む機会が生まれます。イベントやカンファレンスでNearCardが広がるほど、NEARウォレットの普及も進みます。
+
+---
+
 ## Tech Stack / 技術スタック
 
 | Layer | Technology |
