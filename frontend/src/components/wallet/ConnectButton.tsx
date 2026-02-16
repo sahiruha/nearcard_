@@ -2,16 +2,18 @@
 
 import { useWallet } from '@/components/providers/WalletProvider';
 import { Button } from '@/components/ui/Button';
+import { useI18n } from '@/lib/i18n';
 import { Wallet, LogOut } from 'lucide-react';
 
 export function ConnectButton() {
   const { isSignedIn, accountId, isLoading, signIn, signOut } = useWallet();
+  const { t } = useI18n();
 
   if (isLoading) {
     return (
       <Button variant="secondary" size="sm" disabled>
         <Wallet size={14} />
-        Loading...
+        {t('common.loading')}
       </Button>
     );
   }
@@ -25,7 +27,7 @@ export function ConnectButton() {
         <button
           onClick={signOut}
           className="text-text-tertiary hover:text-danger transition-colors cursor-pointer"
-          title="Sign out"
+          title={t('common.signOut')}
         >
           <LogOut size={16} />
         </button>
@@ -36,7 +38,7 @@ export function ConnectButton() {
   return (
     <Button variant="primary" size="sm" onClick={() => signIn()}>
       <Wallet size={14} />
-      Connect Wallet
+      {t('common.connectWallet')}
     </Button>
   );
 }

@@ -14,10 +14,12 @@ import { getProfile } from '@/lib/profile';
 import { getSbtsByOwner } from '@/lib/near';
 import { getCardsByAccount, updatePartyMode } from '@/lib/card-binding';
 import type { Profile, ConnectionSBT, NfcCard, LinkItem } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 import { Plus, Share2, Edit, Shield, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function MyCardPage() {
   const { accountId, isSignedIn, isLoading, signIn } = useWallet();
+  const { t } = useI18n();
   const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [sbts, setSbts] = useState<ConnectionSBT[]>([]);
@@ -79,7 +81,7 @@ export default function MyCardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-pulse text-text-secondary">Loading...</div>
+        <div className="animate-pulse text-text-secondary">{t('common.loading')}</div>
       </div>
     );
   }
@@ -91,13 +93,13 @@ export default function MyCardPage() {
           <Shield size={32} className="text-near-green" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">NEAR Digital Card</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('card.title')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">
-            Connect your wallet to create and share your blockchain-powered digital business card.
+            {t('card.connectDescription')}
           </p>
         </div>
         <Button onClick={() => signIn()}>
-          Connect Wallet to Start
+          {t('card.connectToStart')}
         </Button>
       </div>
     );
@@ -110,14 +112,14 @@ export default function MyCardPage() {
           <Plus size={32} className="text-near-green" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">Create Your Card</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('card.createTitle')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">
-            Set up your profile to start sharing your digital business card.
+            {t('card.createDescription')}
           </p>
         </div>
         <Button onClick={() => router.push('/card/create')}>
           <Plus size={16} />
-          Create Profile
+          {t('card.createProfile')}
         </Button>
       </div>
     );
@@ -165,7 +167,7 @@ export default function MyCardPage() {
             <div className="h-px bg-border mb-4" />
             <div className="text-left">
               <div className="text-[11px] font-semibold tracking-wider uppercase text-text-tertiary mb-3">
-                Link Hub
+                {t('card.linkHub')}
               </div>
               <div className="flex flex-col gap-1.5">
                 {profile.links.map((link, i) => (
@@ -181,11 +183,11 @@ export default function MyCardPage() {
       <div className="flex gap-3">
         <Button className="flex-1" onClick={() => router.push('/share')}>
           <Share2 size={16} />
-          Share
+          {t('card.share')}
         </Button>
         <Button variant="secondary" className="flex-1" onClick={() => router.push('/card/edit')}>
           <Edit size={16} />
-          Edit
+          {t('card.edit')}
         </Button>
       </div>
 
@@ -193,17 +195,17 @@ export default function MyCardPage() {
       <div className="grid grid-cols-3 gap-2.5">
         <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
           <div className="text-xl font-bold text-text-primary">{sbts.length}</div>
-          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">Connections</div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">{t('card.connections')}</div>
         </div>
         <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
           <div className="text-xl font-bold text-text-primary">{nfcCards.length}</div>
-          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">NFC Cards</div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">{t('card.nfcCards')}</div>
         </div>
         <div className="bg-bg-card border border-border rounded-[var(--radius-md)] p-3 text-center">
           <div className="text-xl font-bold text-near-green">
             +{(sbts.length * 0.01).toFixed(2)}
           </div>
-          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">NEAR</div>
+          <div className="text-[10px] text-text-tertiary uppercase tracking-wide mt-1">{t('card.near')}</div>
         </div>
       </div>
 
@@ -227,7 +229,7 @@ export default function MyCardPage() {
             <div className="flex items-center gap-2">
               <CreditCard size={14} className="text-text-tertiary" />
               <span className="text-xs font-semibold text-text-secondary">
-                NFC Cards ({nfcCards.length})
+                {t('card.nfcCardsCount', { count: nfcCards.length })}
               </span>
             </div>
             {showNfcCards ? (

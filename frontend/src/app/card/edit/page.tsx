@@ -11,21 +11,24 @@ import { getProfile, saveProfile, encodeProfileForUrl } from '@/lib/profile';
 import { getCardsByAccount, updatePartyMode, updateDefaultUrl } from '@/lib/card-binding';
 import { getApiBaseUrl } from '@/lib/api-client';
 import type { LinkItem, LinkType, NfcCard } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 import { Plus, Trash2, ArrowLeft, CreditCard, Zap, Camera } from 'lucide-react';
 import Link from 'next/link';
 
-const linkTypeOptions: { value: LinkType; label: string }[] = [
-  { value: 'twitter', label: 'Twitter / X' },
-  { value: 'telegram', label: 'Telegram' },
-  { value: 'github', label: 'GitHub' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'website', label: 'Website' },
-  { value: 'email', label: 'Email' },
-  { value: 'custom', label: 'Custom' },
+const linkTypeKeys: { value: LinkType; key: string }[] = [
+  { value: 'twitter', key: 'linkType.twitter' },
+  { value: 'telegram', key: 'linkType.telegram' },
+  { value: 'github', key: 'linkType.github' },
+  { value: 'linkedin', key: 'linkType.linkedin' },
+  { value: 'discord', key: 'linkType.discord' },
+  { value: 'website', key: 'linkType.website' },
+  { value: 'email', key: 'linkType.email' },
+  { value: 'custom', key: 'linkType.custom' },
 ];
 
 export default function EditCardPage() {
   const { accountId, isSignedIn } = useWallet();
+  const { t } = useI18n();
   const router = useRouter();
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
@@ -127,7 +130,7 @@ export default function EditCardPage() {
   if (!isSignedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <p className="text-text-secondary">Please connect your wallet first.</p>
+        <p className="text-text-secondary">{t('create.walletRequired')}</p>
       </div>
     );
   }
@@ -154,7 +157,7 @@ export default function EditCardPage() {
         <Link href="/card" className="text-text-tertiary hover:text-text-primary transition-colors">
           <ArrowLeft size={20} />
         </Link>
-        <h1 className="text-lg font-bold">Edit Profile</h1>
+        <h1 className="text-lg font-bold">{t('edit.title')}</h1>
       </div>
 
       {/* Avatar Upload */}
@@ -179,17 +182,17 @@ export default function EditCardPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <Input label="Name *" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <Input label="Organization" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+        <Input label={t('create.nameLabel')} value={name} onChange={(e) => setName(e.target.value)} />
+        <Input label={t('create.titleLabel')} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input label={t('create.orgLabel')} value={organization} onChange={(e) => setOrganization(e.target.value)} />
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-text-primary">Links</h2>
+          <h2 className="text-sm font-semibold text-text-primary">{t('create.links')}</h2>
           <button onClick={addLink} className="flex items-center gap-1 text-xs text-near-green hover:opacity-80 cursor-pointer">
             <Plus size={14} />
-            Add Link
+            {t('create.addLink')}
           </button>
         </div>
 
@@ -201,9 +204,9 @@ export default function EditCardPage() {
                 onChange={(e) => updateLink(i, 'type', e.target.value)}
                 className="flex-1 px-3 py-2 bg-bg-input border border-border rounded-[var(--radius-md)] text-xs text-text-primary"
               >
-                {linkTypeOptions.map((opt) => (
+                {linkTypeKeys.map((opt) => (
                   <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {t(opt.key)}
                   </option>
                 ))}
               </select>
@@ -211,8 +214,8 @@ export default function EditCardPage() {
                 <Trash2 size={14} />
               </button>
             </div>
-            <Input placeholder="Label" value={link.label} onChange={(e) => updateLink(i, 'label', e.target.value)} />
-            <Input placeholder="URL" value={link.url} onChange={(e) => updateLink(i, 'url', e.target.value)} />
+            <Input placeholder={t('create.labelPlaceholder')} value={link.label} onChange={(e) => updateLink(i, 'label', e.target.value)} />
+            <Input placeholder={t('create.urlPlaceholder')} value={link.url} onChange={(e) => updateLink(i, 'url', e.target.value)} />
           </div>
         ))}
       </div>
@@ -222,26 +225,26 @@ export default function EditCardPage() {
         <div className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
             <CreditCard size={14} />
-            NFC Card Settings
+            {t('edit.nfcSettings')}
           </h2>
           <Card className="p-4">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Zap size={14} className={primaryCard.isPartyMode ? 'text-near-green' : 'text-text-tertiary'} />
-                  <span className="text-sm text-text-primary">Party Mode</span>
+                  <span className="text-sm text-text-primary">{t('edit.partyMode')}</span>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full ${
                   primaryCard.isPartyMode
                     ? 'bg-near-green-dim text-near-green'
                     : 'bg-bg-input text-text-tertiary'
                 }`}>
-                  {primaryCard.isPartyMode ? 'ON' : 'OFF'}
+                  {primaryCard.isPartyMode ? t('edit.on') : t('edit.off')}
                 </span>
               </div>
               {primaryCard.isPartyMode && primaryCard.partyLinkLabel && (
                 <p className="text-xs text-text-secondary">
-                  Redirect: {primaryCard.partyLinkLabel}
+                  {t('edit.redirect', { label: primaryCard.partyLinkLabel || '' })}
                 </p>
               )}
               <Button
@@ -251,7 +254,7 @@ export default function EditCardPage() {
                 className="w-full"
               >
                 <Zap size={12} />
-                Configure Party Mode
+                {t('edit.configureParty')}
               </Button>
             </div>
           </Card>
@@ -259,7 +262,7 @@ export default function EditCardPage() {
       )}
 
       <Button onClick={handleSave} disabled={!name.trim()} className="w-full">
-        Save Changes
+        {t('edit.saveChanges')}
       </Button>
     </div>
   );

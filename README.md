@@ -1,362 +1,412 @@
 # NEAR Digital Card
 
-NEAR Protocol上に構築されたブロックチェーンベースのデジタル名刺アプリです。名刺交換、リンク集約（Linktree的機能）、オンチェーン接続証明を組み合わせています。
+> Blockchain-based digital business card on NEAR Protocol.
+> Combines card exchange, link aggregation (like Linktree), and on-chain Connection Proof SBT.
+>
+> NEAR Protocol上に構築されたブロックチェーンベースのデジタル名刺アプリ。
+> 名刺交換、リンク集約（Linktree的機能）、オンチェーン接続証明SBTを組み合わせています。
 
-## 技術スタック
+Every card exchange automatically: / 名刺交換ごとに自動で:
+1. Issues a **Connection Proof SBT** to both parties / 双方にSBTを発行
+2. Sends **0.01 NEAR** to the recipient / 0.01 NEARを受取者に送金
+3. Records the exchange **permanently on-chain** / 交換をオンチェーンに永続記録
 
-| レイヤー | 技術 |
-|---------|------|
-| フロントエンド | Next.js 16 + React 19 + TypeScript |
-| スタイリング | Tailwind CSS v4 + CSS Custom Properties（ダークテーマ） |
-| ブロックチェーン | NEAR Protocol (testnet) |
-| ウォレット接続 | @hot-labs/near-connect |
-| コントラクト通信 | near-api-js |
-| バックエンドAPI | Cloudflare Workers (Hono) |
-| データベース | Cloudflare D1 (SQLite) |
-| ファイルストレージ | Cloudflare R2（アバター画像） |
-| フロントエンドホスティング | Cloudflare Pages |
-| ビルド形式 | 静的エクスポート (`output: "export"`) |
+---
 
-## デプロイ済みURL
+## Tech Stack / 技術スタック
 
-| サービス | URL |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 16 + React 19 + TypeScript |
+| Styling | Tailwind CSS v4 + CSS Custom Properties (dark theme) |
+| Blockchain | NEAR Protocol (testnet) |
+| Wallet | @hot-labs/near-connect |
+| Contract SDK | near-api-js |
+| Backend API | Cloudflare Workers (Hono) |
+| Database | Cloudflare D1 (SQLite) |
+| File Storage | Cloudflare R2 (avatar images) |
+| Frontend Hosting | Cloudflare Pages |
+| Build | Static export (`output: "export"`) |
+| i18n | Custom React Context (EN / JA / ZH / KO) |
+
+## Deployed URLs / デプロイ済みURL
+
+| Service | URL |
 |---------|-----|
-| **フロントエンド** | https://nearcard-app.pages.dev |
+| **Frontend** | https://nearcard-app.pages.dev |
 | **Worker API** | https://nearcard-worker.nc-d2ec48ed.workers.dev |
-| **ヘルスチェック** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health |
-| **NFCリダイレクト** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} |
+| **Health Check** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health |
+| **NFC Redirect** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} |
 
-## ディレクトリ構成
+---
+
+## Directory Structure / ディレクトリ構成
 
 ```
 nearcard/
-├── frontend/                    # Next.jsフロントエンド
+├── frontend/                    # Next.js Frontend
 │   ├── src/
-│   │   ├── app/                 # ページルーティング
-│   │   │   ├── page.tsx         # ランディング（/cardにリダイレクト）
+│   │   ├── app/                 # Page routing
+│   │   │   ├── page.tsx         # Landing (redirects to /card)
 │   │   │   ├── card/
-│   │   │   │   ├── page.tsx     # マイカード (B1) + パーティーモード
-│   │   │   │   ├── create/      # プロフィール作成 (A3) + アバターアップロード
-│   │   │   │   ├── edit/        # プロフィール編集 (D1) + NFC設定 + アバター
-│   │   │   │   └── view/        # 公開カードビュー (A1, Level 0)
+│   │   │   │   ├── page.tsx     # My Card (B1) + Party Mode
+│   │   │   │   ├── create/      # Profile creation (A3) + avatar upload
+│   │   │   │   ├── edit/        # Profile editing (D1) + NFC settings
+│   │   │   │   └── view/        # Public card view (A1, Level 0)
 │   │   │   ├── c/
-│   │   │   │   └── register/    # NFCカード登録ページ
-│   │   │   ├── share/           # QRコード共有 (C1) + NFCカードURL表示
+│   │   │   │   └── register/    # NFC card registration
+│   │   │   ├── share/           # QR code sharing (C1) + NFC URL
 │   │   │   └── exchange/
-│   │   │       ├── confirm/     # 交換確認 (C2)
-│   │   │       └── complete/    # 交換完了 (C3)
+│   │   │       ├── confirm/     # Exchange confirmation (C2)
+│   │   │       └── complete/    # Exchange completion (C3)
 │   │   ├── components/
 │   │   │   ├── card/
-│   │   │   │   ├── CardPreview.tsx       # カード表示（アバター画像対応）
-│   │   │   │   ├── LinkList.tsx          # リンク一覧
-│   │   │   │   ├── LinkBlock.tsx         # 個別リンク
-│   │   │   │   ├── PartyModeToggle.tsx   # パーティーモードON/OFFトグル
-│   │   │   │   ├── PartyModeSettings.tsx # パーティーモードリンク選択
-│   │   │   │   └── NfcCardManager.tsx    # NFCカード管理パネル
+│   │   │   │   ├── CardPreview.tsx       # Card display (avatar support)
+│   │   │   │   ├── LinkList.tsx          # Link list
+│   │   │   │   ├── LinkBlock.tsx         # Individual link with brand SVG icons
+│   │   │   │   ├── PartyModeToggle.tsx   # Party Mode ON/OFF toggle
+│   │   │   │   ├── PartyModeSettings.tsx # Party Mode link selection
+│   │   │   │   └── NfcCardManager.tsx    # NFC card management panel
 │   │   │   ├── exchange/
+│   │   │   │   └── QRCodeDisplay.tsx     # QR code display + copy link
 │   │   │   ├── layout/
+│   │   │   │   ├── Header.tsx            # Header with LanguageSelector
+│   │   │   │   ├── BottomNav.tsx         # Bottom navigation (i18n)
+│   │   │   │   └── LanguageSelector.tsx  # Language switcher (EN/JA/ZH/KO)
 │   │   │   ├── wallet/
+│   │   │   │   └── ConnectButton.tsx     # Wallet connect/disconnect
 │   │   │   ├── ui/              # Button, Card, Input
 │   │   │   └── providers/
 │   │   │       └── WalletProvider.tsx
 │   │   └── lib/
-│   │       ├── types.ts         # 型定義
-│   │       ├── near.ts          # NEARコントラクト通信
-│   │       ├── profile.ts       # プロフィール管理（localStorage + D1バックエンド）
-│   │       ├── api-client.ts    # Worker API fetchラッパー
-│   │       └── card-binding.ts  # NFCカード紐付けCRUD
-│   ├── .env.local               # 環境変数
+│   │       ├── types.ts         # Type definitions
+│   │       ├── near.ts          # NEAR contract communication
+│   │       ├── profile.ts       # Profile management (localStorage + D1)
+│   │       ├── api-client.ts    # Worker API fetch wrapper
+│   │       ├── card-binding.ts  # NFC card binding CRUD
+│   │       └── i18n.tsx         # i18n provider (4 languages)
+│   ├── .env.local               # Environment variables
 │   └── package.json
 ├── worker/                      # Cloudflare Worker (Hono)
 │   ├── src/
-│   │   ├── index.ts             # エントリーポイント + CORS + ルート登録
-│   │   ├── types.ts             # D1/R2バインディング型定義
+│   │   ├── index.ts             # Entry point + CORS + routes
+│   │   ├── types.ts             # D1/R2 binding types
 │   │   └── routes/
-│   │       ├── redirect.ts      # GET /c/:cardId — NFCリダイレクト
-│   │       ├── cards.ts         # カードCRUD API
-│   │       ├── profiles.ts      # プロフィールCRUD API
-│   │       └── upload.ts        # R2アバターアップロード・配信
-│   ├── schema.sql               # D1マイグレーション
-│   ├── wrangler.toml            # Cloudflare設定（D1/R2バインディング）
-│   ├── tsconfig.json
+│   │       ├── redirect.ts      # GET /c/:cardId - NFC redirect
+│   │       ├── cards.ts         # Card CRUD API
+│   │       ├── profiles.ts      # Profile CRUD API
+│   │       └── upload.ts        # R2 avatar upload/serve
+│   ├── schema.sql               # D1 migration
+│   ├── wrangler.toml            # Cloudflare config (D1/R2 bindings)
 │   └── package.json
-├── contract/                    # Rustスマートコントラクト (SBT)
-├── CLAUDE.md                    # プロジェクト仕様書
-└── README.md                    # このファイル
+├── contract/                    # Rust smart contract (SBT)
+│   └── nearcard-sbt/
+│       ├── Cargo.toml
+│       └── src/lib.rs           # Connection Proof SBT contract
+├── scripts/
+│   ├── deploy.sh                # Contract build & deploy
+│   └── setup-testnet.sh         # Testnet account setup
+├── docs/
+│   └── mainnet-deploy-guide.md  # Mainnet deployment guide
+├── CLAUDE.md                    # Project specification (bilingual)
+└── README.md                    # This file
 ```
 
-## セットアップ手順
+---
 
-### 1. フロントエンド
+## Setup / セットアップ
+
+### 1. Frontend / フロントエンド
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 2. Worker（バックエンドAPI）
+### 2. Worker (Backend API) / バックエンドAPI
 
 ```bash
 cd worker
 npm install
 ```
 
-### 3. 環境変数の設定
+### 3. Environment Variables / 環境変数
 
-`frontend/.env.local` を編集:
+Edit `frontend/.env.local`: / `frontend/.env.local` を編集:
 
 ```env
-# NEAR
 NEXT_PUBLIC_CONTRACT_ID=sbt.nearharu.testnet
 NEXT_PUBLIC_NETWORK_ID=testnet
-
-# Cloudflare Worker API
 NEXT_PUBLIC_API_URL=https://nearcard-worker.nc-d2ec48ed.workers.dev
 ```
 
-### 4. Cloudflareリソースの作成（初回のみ）
+### 4. Cloudflare Resources (first time only) / Cloudflareリソース作成（初回のみ）
 
 ```bash
 cd worker
 
-# D1データベース作成
+# Create D1 database / D1データベース作成
 wrangler d1 create nearcard-db
 
-# R2バケット作成
+# Create R2 bucket / R2バケット作成
 wrangler r2 bucket create nearcard-avatars
 ```
 
-`wrangler.toml` の `database_id` を作成時に表示されたIDに更新してください。
+Update `database_id` in `wrangler.toml` with the ID shown at creation.
+作成時に表示された `database_id` で `wrangler.toml` を更新してください。
 
-### 5. D1スキーマの適用
+### 5. Apply D1 Schema / D1スキーマ適用
 
 ```bash
 cd worker
 
-# リモートDBに適用
+# Remote DB / リモートDB
 wrangler d1 execute nearcard-db --remote --file=./schema.sql
 
-# ローカル開発用DBに適用
+# Local dev DB / ローカル開発用DB
 wrangler d1 execute nearcard-db --local --file=./schema.sql
 ```
 
-### 6. Workerのデプロイ
+### 6. Deploy Worker / Workerデプロイ
 
 ```bash
 cd worker
 wrangler deploy
 ```
 
-### 7. ローカル開発
+### 7. Local Development / ローカル開発
 
 ```bash
-# Worker（バックエンドAPI）
+# Worker (Backend API)
 cd worker
 npm run dev
-# → http://localhost:8787
+# -> http://localhost:8787
 
-# フロントエンド（別ターミナル）
+# Frontend (separate terminal / 別ターミナル)
 cd frontend
 npm run dev
-# → http://localhost:3000
+# -> http://localhost:3000
 ```
 
-### 8. ビルド（静的エクスポート）
+### 8. Build (Static Export) / ビルド（静的エクスポート）
 
 ```bash
 cd frontend
 npm run build
 ```
 
-`frontend/out/` に静的ファイルが生成されます。任意の静的ホスティング（Vercel, Cloudflare Pages, GitHub Pages等）にデプロイ可能です。
+Static files are generated in `frontend/out/`. Deployable to any static hosting.
+`frontend/out/` に静的ファイルが生成されます。任意の静的ホスティングにデプロイ可能です。
 
 ---
 
-## アーキテクチャ
+## Architecture / アーキテクチャ
 
 ```
-Frontend (静的HTML) → fetch() → Cloudflare Worker (Hono) → D1 + R2
-                                      ↑
-NFCタグタップ → Worker GET /c/{cardId} → D1検索 → 302リダイレクト
+Frontend (Static HTML) -> fetch() -> Cloudflare Worker (Hono) -> D1 + R2
+                                           |
+NFC Tag Tap -> Worker GET /c/{cardId} -> D1 Lookup -> 302 Redirect
+                                           |
+Card Exchange -> NEAR Contract -> SBT Mint + 0.01 NEAR Transfer
 ```
 
-## Worker APIエンドポイント
+## Worker API Endpoints / APIエンドポイント
 
-| メソッド | パス | 説明 |
-|---------|------|------|
-| GET | `/health` | ヘルスチェック |
-| GET | `/c/:cardId` | NFCリダイレクト |
-| GET | `/api/cards?cardId=xxx` | カード情報取得 |
-| GET | `/api/cards/account/:accountId` | アカウントの全カード取得 |
-| POST | `/api/cards/link` | カード紐付け |
-| PUT | `/api/cards/unlink` | カード紐付け解除 |
-| PUT | `/api/cards/party-mode` | パーティーモード設定 |
-| PUT | `/api/cards/default-url` | デフォルトURL更新 |
-| GET | `/api/profiles/:accountId` | プロフィール取得 |
-| PUT | `/api/profiles/:accountId` | プロフィール保存 (UPSERT) |
-| POST | `/api/upload/avatar` | アバター画像アップロード |
-| GET | `/api/avatars/:key` | アバター画像配信 |
+| Method | Path | Description / 説明 |
+|--------|------|-----------|
+| GET | `/health` | Health check / ヘルスチェック |
+| GET | `/c/:cardId` | NFC redirect / NFCリダイレクト |
+| GET | `/api/cards?cardId=xxx` | Get card info / カード情報取得 |
+| GET | `/api/cards/account/:accountId` | Get all cards for account / アカウントの全カード取得 |
+| POST | `/api/cards/link` | Link card / カード紐付け |
+| PUT | `/api/cards/unlink` | Unlink card / カード紐付け解除 |
+| PUT | `/api/cards/party-mode` | Set party mode / パーティーモード設定 |
+| PUT | `/api/cards/default-url` | Update default URL / デフォルトURL更新 |
+| GET | `/api/profiles/:accountId` | Get profile / プロフィール取得 |
+| PUT | `/api/profiles/:accountId` | Save profile (UPSERT) / プロフィール保存 |
+| POST | `/api/upload/avatar` | Upload avatar image / アバター画像アップロード |
+| GET | `/api/avatars/:key` | Serve avatar image / アバター画像配信 |
 
 ---
 
-## 機能: NFCカード紐付け & パーティーモード
+## Features / 機能
 
-### 概要
+### i18n (Internationalization / 多言語対応)
 
-物理的なNFCカード（タグ）とNEARアカウントを紐付け、タップするだけでプロフィール共有やソーシャルアカウントへのリダイレクトができる機能です。
+Supports 4 languages with automatic browser detection and manual switching:
+ブラウザ言語の自動検出と手動切替で4言語に対応:
 
-### NFCリダイレクトフロー
+| Language | Code |
+|----------|------|
+| English | `en` |
+| Japanese / 日本語 | `ja` |
+| Chinese (Simplified) / 中文 | `zh` |
+| Korean / 한국어 | `ko` |
+
+- Lightweight custom implementation (no external library) / 外部ライブラリ不使用の軽量実装
+- `useI18n()` hook returns `{ t, locale, setLocale }` / hookで翻訳関数・言語切替を提供
+- Selection persisted in localStorage / 選択言語はlocalStorageに永続化
+- Language selector in the header / ヘッダーに言語切替ドロップダウン
+
+### Supported Link Types / 対応リンクタイプ
+
+Each link type has a dedicated brand-colored SVG icon:
+各リンクタイプに専用のブランドカラーSVGアイコン:
+
+| Type | Color | Description / 説明 |
+|------|-------|-----------|
+| Twitter / X | `#1DA1F2` | X (formerly Twitter) profile |
+| Telegram | `#0088cc` | Telegram profile / channel |
+| GitHub | `#aaaaaa` | GitHub profile / repo |
+| LinkedIn | `#0A66C2` | LinkedIn profile |
+| Discord | `#5865F2` | Discord server invite |
+| Website | `#00EC97` | Personal website / blog |
+| Email | `#FFB344` | Email address (mailto:) |
+| Custom | `#9966FF` | Any custom URL |
+
+### NFC Card Binding & Party Mode / NFCカード紐付け & パーティーモード
+
+Physical NFC cards (tags) can be linked to a NEAR account. Tapping shares your profile or redirects to a social account.
+物理NFCカードをNEARアカウントに紐付け。タップでプロフィール共有やソーシャルアカウントへリダイレクト。
+
+**NFC Redirect Flow / NFCリダイレクトフロー:**
 
 ```
-[NFCタップ] → ブラウザが URL を開く
-    ↓
+[NFC Tap] -> Browser opens URL
+    |
 [Cloudflare Worker] GET /c/{cardId}
-    ├─ カード未登録 or 未紐付け → 302 → /c/register/?cardId={cardId}
-    ├─ 紐付け済み + パーティーモードOFF → 302 → default_url（カードビュー）
-    └─ 紐付け済み + パーティーモードON  → 302 → party_link_url（ソーシャルURL）
+    |-- Card not registered -> 302 -> /c/register/?cardId={cardId}
+    |-- Linked + Party Mode OFF -> 302 -> default_url (card view)
+    +-- Linked + Party Mode ON  -> 302 -> party_link_url (social URL)
 ```
 
-### NFCカード登録フロー
+**Party Mode:**
+At events or parties, NFC tap instantly redirects to a selected social account (Twitter, Discord, etc.).
+イベントやパーティーの場で、NFCタップで即座にソーシャルアカウントに飛ばせる機能。
 
-1. NFCタグに書き込むURL:
-   ```
-   https://nearcard-worker.nc-d2ec48ed.workers.dev/c/nc_abc123
-   ```
-2. ユーザーがNFCタグをスマホにタップ
-3. ブラウザが上記URLを開く → Workerが処理
-4. 未紐付けのカード → `/c/register/?cardId=nc_abc123` にリダイレクト
-5. ユーザーがウォレットを接続し、「Link This Card」ボタンを押す
-6. 紐付け完了 → 以降のタップではプロフィールページが表示される
+### Profile Storage / プロフィール保存方式
 
-### パーティーモード
+Profiles are saved in 2 locations: / プロフィールは2箇所に保存:
 
-イベントやパーティーの場で、NFCタップで即座に特定のソーシャルアカウント（Twitter, Telegram等）に飛ばせる機能です。
+1. **localStorage** - instant, same-device only / 即座に反映、同一デバイスのみ
+2. **D1 Backend** - async fire-and-forget, cross-device / 非同期保存、クロスデバイス対応
 
-**設定方法:**
+Card view (`/card/view`) uses 3-level fallback: / カードビュー取得の3段階フォールバック:
+1. URL-encoded data (QR/link sharing) / URLエンコードデータ
+2. localStorage (same device) / localStorage（同一デバイス）
+3. D1 backend API (cross-device) / D1バックエンドAPI
 
-1. `/card`（マイカードページ）でParty Modeトグルを ON
-2. 「Change」をタップしてリダイレクト先のリンクを選択（プロフィールに登録済みのリンクから選ぶ）
-3. 保存すると、NFCタップ時に選択したURLに直接リダイレクトされるようになる
+---
 
-### プロフィールの保存方式
+## Pages / ページ構成
 
-プロフィールは2箇所に保存されます:
+| Page | URL | Description / 説明 | Wallet Required |
+|------|-----|-----------|:-----------:|
+| Top | `/` | Redirects to `/card` | No |
+| My Card | `/card` | Party Mode + NFC management | Yes |
+| Create Profile | `/card/create` | Avatar upload support | Yes |
+| Edit Profile | `/card/edit` | NFC Card Settings + avatar | Yes |
+| Public Card View | `/card/view` | Level 0, D1 fallback | No |
+| Share | `/share` | QR code + NFC URL sharing | Yes |
+| Exchange Confirm | `/exchange/confirm` | SBT mint + 0.01 NEAR transfer | Yes |
+| Exchange Complete | `/exchange/complete` | Result + Explorer link | Yes |
+| NFC Card Register | `/c/register` | Card linking | Yes |
 
-1. **localStorage**（即座に反映、同一デバイスのみ）
-2. **D1バックエンド**（fire-and-forget で非同期保存、クロスデバイス対応）
+## Progressive Web3 Design / プログレッシブWeb3設計
 
-カードビュー（`/card/view`）では3段階のフォールバックで取得:
-1. URLエンコードされたデータ（QR/リンク共有時）
-2. localStorage（同一デバイス）
-3. D1バックエンドAPI（クロスデバイス）
+Never force Web3 on users. All features work across 4 levels:
+ユーザーにWeb3を強制しない。4段階のアクセスレベル:
 
-### アクセスするサイト・URL一覧
+| Level | Requirements / 要件 | Capabilities / できること |
+|-------|-----------|------------|
+| Level 0 | Browser only / ブラウザのみ | View card + Link Hub, save vCard / カード閲覧、vCard保存 |
+| Level 1 | Email auth (FastAuth) | Create card, edit Link Hub / カード作成、リンク編集 |
+| Level 2 | Wallet connected | Exchange cards, SBT, receive 0.01 NEAR / 名刺交換、SBT、NEAR受取 |
+| Level 3 | Web3 native | NFT/SBT display, NEAR tips, token gating |
 
-| 用途 | URL | 説明 |
-|-----|-----|------|
-| **Cloudflare Dashboard** | https://dash.cloudflare.com | Workers, D1, R2の管理 |
-| **Worker API** | https://nearcard-worker.nc-d2ec48ed.workers.dev | バックエンドAPI |
-| **ヘルスチェック** | https://nearcard-worker.nc-d2ec48ed.workers.dev/health | APIステータス確認 |
-| **NFCリダイレクト** | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} | NFCタグに書き込むURL |
-| **開発サーバー（Worker）** | http://localhost:8787 | ローカルWorker |
-| **開発サーバー（Frontend）** | http://localhost:3000 | ローカルフロントエンド |
+---
 
-### データベーステーブル
+## Smart Contract / スマートコントラクト
 
-#### `cards` テーブル
+**Account:** `sbt.nearharu.testnet` (testnet)
 
-| カラム | 型 | 説明 |
-|-------|-----|------|
-| id | TEXT | 主キー（自動生成） |
-| card_id | TEXT | NFCタグの一意識別子 (例: `nc_a3f8b2e1`) |
-| account_id | TEXT | NEARアカウントID (null=未紐付け) |
-| display_name | TEXT | 表示名キャッシュ |
-| default_url | TEXT | 通常時のリダイレクト先URL |
-| is_party_mode | INTEGER | パーティーモード有効/無効 (0/1) |
-| party_link_url | TEXT | パーティーモード時のリダイレクト先 |
-| party_link_label | TEXT | パーティーモードのリンクラベル |
-| linked_at | TEXT | 紐付け日時 |
-| created_at | TEXT | 作成日時 |
-| updated_at | TEXT | 更新日時 |
+### Methods / メソッド
 
-#### `card_link_history` テーブル（監査ログ）
+| Type | Method | Description / 説明 |
+|------|--------|-----------|
+| init | `new(owner, transfer_amount)` | Initialize contract / 初期化 |
+| change | `deposit()` | Deposit NEAR to funding pool / プールに入金 |
+| change | `exchange_cards(party_b, event_name)` | Exchange cards, mint SBTs, transfer NEAR / 名刺交換 |
+| change | `set_transfer_amount(amount)` | Update transfer amount (owner only) / 送金額変更 |
+| view | `get_sbt(token_id)` | Get SBT by ID |
+| view | `get_sbts_by_owner(account_id)` | Get all SBTs for account |
+| view | `get_pool_balance()` | Get funding pool balance |
+| view | `get_sbt_count()` | Get total SBT count |
+| view | `get_transfer_amount()` | Get current transfer amount |
+| view | `get_owner()` | Get contract owner |
 
-| カラム | 型 | 説明 |
-|-------|-----|------|
-| id | TEXT | 主キー |
-| card_id | TEXT | カードID |
-| account_id | TEXT | アカウントID |
-| action | TEXT | `link` or `unlink` |
-| created_at | TEXT | 実行日時 |
+---
 
-#### `profiles` テーブル（プロフィール）
+## Database Tables / データベーステーブル
 
-| カラム | 型 | 説明 |
-|-------|-----|------|
-| id | TEXT | 主キー |
-| account_id | TEXT | NEARアカウントID (UNIQUE) |
-| name | TEXT | 名前 |
-| title | TEXT | 肩書き |
-| organization | TEXT | 組織 |
-| avatar_url | TEXT | アバター画像URL (R2) |
-| near_account | TEXT | NEARアカウント |
-| links | TEXT | リンクJSON配列 |
-| created_at | TEXT | 作成日時 |
-| updated_at | TEXT | 更新日時 |
+### `cards`
 
-### セキュリティ
+| Column | Type | Description / 説明 |
+|--------|------|-----------|
+| id | TEXT | Primary key (auto-generated) |
+| card_id | TEXT | NFC tag unique ID (e.g. `nc_a3f8b2e1`) |
+| account_id | TEXT | NEAR account ID (null = unlinked) |
+| display_name | TEXT | Display name cache |
+| default_url | TEXT | Normal redirect URL |
+| is_party_mode | INTEGER | Party Mode enabled (0/1) |
+| party_link_url | TEXT | Party Mode redirect URL |
+| party_link_label | TEXT | Party Mode link label |
+| linked_at | TEXT | Link timestamp |
 
-- **カード乗っ取り防止:** 紐付け（`linkCard`）は `account_id IS NULL` の場合のみ実行可能
-- **所有者確認:** 全更新操作に `account_id = ?` 条件を付与
-- **URLバリデーション:** リダイレクト先は `https://` のみ許可
-- **監査ログ:** `card_link_history` テーブルで全ての紐付け/解除を記録
-- **アバターアップロード:** 2MB制限、JPEG/PNG/WebP/GIFのみ許可
+### `profiles`
 
-### NFCタグへの書き込み
+| Column | Type | Description / 説明 |
+|--------|------|-----------|
+| account_id | TEXT | NEAR account ID (UNIQUE) |
+| name | TEXT | Name / 名前 |
+| title | TEXT | Title / 肩書き |
+| organization | TEXT | Organization / 組織 |
+| avatar_url | TEXT | Avatar image URL (R2) |
+| links | TEXT | Links JSON array |
 
-NFCタグ（NTAG215等）に以下のURLをNDEF URIレコードとして書き込みます:
+---
+
+## Security / セキュリティ
+
+- **Card hijack prevention / カード乗っ取り防止:** `linkCard` only when `account_id IS NULL`
+- **Owner verification / 所有者確認:** All updates require `account_id = ?` condition
+- **URL validation / URLバリデーション:** Redirect targets must be `https://` only
+- **Audit log / 監査ログ:** `card_link_history` table records all link/unlink actions
+- **Avatar upload / アバターアップロード:** 2MB limit, JPEG/PNG/WebP/GIF only
+
+## NFC Tag Writing / NFCタグ書き込み
+
+Write the following URL as an NDEF URI record to an NFC tag (e.g. NTAG215):
+NFCタグにNDEF URIレコードとして以下のURLを書き込み:
 
 ```
 https://nearcard-worker.nc-d2ec48ed.workers.dev/c/<card-id>
 ```
 
-**書き込みツール:**
+**Writing tools / 書き込みツール:**
 - iOS: [NFC Tools](https://apps.apple.com/app/nfc-tools/id1252962749)
 - Android: [NFC Tools](https://play.google.com/store/apps/details?id=com.wakdev.wdnfc)
 
-**card-idの命名規則:**
-- プレフィックス `nc_` + ランダム文字列を推奨（例: `nc_a3f8b2e1`）
-- 十分にランダムにし推測不可にすること
+**card-id naming:** Prefix `nc_` + random string (e.g. `nc_a3f8b2e1`). Must be sufficiently random.
+**card-id命名規則:** `nc_` + ランダム文字列を推奨。推測不可にすること。
 
 ---
 
-## ページ構成
+## Mainnet Deployment / メインネットデプロイ
 
-| ページ | URL | 説明 | ウォレット必要 |
-|-------|-----|------|:-----------:|
-| トップ | https://nearcard-app.pages.dev/ | `/card`にリダイレクト | No |
-| マイカード | https://nearcard-app.pages.dev/card | パーティーモード + NFC管理 | Yes |
-| プロフィール作成 | https://nearcard-app.pages.dev/card/create | アバターアップロード対応 | Yes |
-| プロフィール編集 | https://nearcard-app.pages.dev/card/edit | NFC Card Settings + アバター | Yes |
-| 公開カードビュー | https://nearcard-app.pages.dev/card/view | Level 0、D1フォールバック付き | No |
-| シェア | https://nearcard-app.pages.dev/share | QRコード + NFC URL共有 | Yes |
-| 名刺交換確認 | https://nearcard-app.pages.dev/exchange/confirm | SBT発行 + 0.01 NEAR送金 | Yes |
-| 交換完了 | https://nearcard-app.pages.dev/exchange/complete | 結果表示 + Explorer リンク | Yes |
-| NFCカード登録 | https://nearcard-app.pages.dev/c/register | カード紐付け | Yes |
-| NFCリダイレクト | https://nearcard-worker.nc-d2ec48ed.workers.dev/c/{cardId} | Worker経由302リダイレクト | — |
-| ヘルスチェック | https://nearcard-worker.nc-d2ec48ed.workers.dev/health | APIステータス | — |
+See [docs/mainnet-deploy-guide.md](docs/mainnet-deploy-guide.md) for the full mainnet deployment guide.
+メインネットデプロイの詳細手順は [docs/mainnet-deploy-guide.md](docs/mainnet-deploy-guide.md) を参照。
 
-## Progressive Web3 設計
-
-ウォレットやブロックチェーンの知識がなくても使えるよう、4段階のアクセスレベルを設けています:
-
-| レベル | 要件 | できること |
-|-------|------|----------|
-| Level 0 | ブラウザのみ | カード閲覧、Link Hub閲覧、vCard保存 |
-| Level 1 | メール認証（FastAuth） | カード作成、Link Hub編集 |
-| Level 2 | ウォレット接続 | 名刺交換、SBT発行、0.01 NEAR受取 |
-| Level 3 | Web3ネイティブ | NFT/SBT表示、NEAR送金、トークンゲーティング |
-
-## ライセンス
+## License / ライセンス
 
 MIT

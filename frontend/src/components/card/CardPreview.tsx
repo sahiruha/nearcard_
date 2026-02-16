@@ -21,17 +21,23 @@ export function CardPreview({ profile, showLinks = true }: CardPreviewProps) {
     ? (profile.avatar.startsWith('http') ? profile.avatar : `${getApiBaseUrl()}${profile.avatar}`)
     : null;
 
+  const titleLine = [profile.title, profile.organization].filter(Boolean).join(' @ ');
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Avatar */}
+    <div className="flex flex-col items-center gap-3">
+      {/* Avatar with glow ring */}
       {avatarUrl ? (
         <img
           src={avatarUrl}
           alt={profile.name}
           className="w-20 h-20 rounded-full object-cover shrink-0"
+          style={{ boxShadow: '0 0 0 3px var(--near-green-dim), 0 0 20px var(--near-green-dim)' }}
         />
       ) : (
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-3xl font-bold text-black shrink-0">
+        <div
+          className="w-20 h-20 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-3xl font-bold text-black shrink-0"
+          style={{ boxShadow: '0 0 0 3px var(--near-green-dim), 0 0 20px var(--near-green-dim)' }}
+        >
           {initials}
         </div>
       )}
@@ -39,16 +45,13 @@ export function CardPreview({ profile, showLinks = true }: CardPreviewProps) {
       {/* Info */}
       <div className="text-center">
         <h2 className="text-xl font-bold text-text-primary">{profile.name}</h2>
-        {profile.title && (
-          <p className="text-sm text-text-secondary mt-0.5">{profile.title}</p>
-        )}
-        {profile.organization && (
-          <p className="text-xs text-text-tertiary mt-0.5">{profile.organization}</p>
+        {titleLine && (
+          <p className="text-[13px] text-text-secondary mt-1">{titleLine}</p>
         )}
         {profile.nearAccount && (
-          <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 text-[11px] font-semibold bg-near-green-dim text-near-green border border-near-green-mid rounded-full">
+          <p className="text-xs text-near-green font-medium mt-1.5 font-mono">
             {profile.nearAccount}
-          </span>
+          </p>
         )}
       </div>
 

@@ -8,10 +8,12 @@ import { getProfile, encodeProfileForUrl } from '@/lib/profile';
 import { getCardsByAccount } from '@/lib/card-binding';
 import { getApiBaseUrl } from '@/lib/api-client';
 import type { Profile, NfcCard } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 import { QrCode, CreditCard, Zap, Copy, Check } from 'lucide-react';
 
 export default function SharePage() {
   const { accountId, isSignedIn } = useWallet();
+  const { t } = useI18n();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [shareUrl, setShareUrl] = useState('');
   const [nfcCards, setNfcCards] = useState<NfcCard[]>([]);
@@ -46,7 +48,7 @@ export default function SharePage() {
   if (!isSignedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <p className="text-text-secondary">Connect your wallet to share your card.</p>
+        <p className="text-text-secondary">{t('share.connectFirst')}</p>
       </div>
     );
   }
@@ -54,7 +56,7 @@ export default function SharePage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <p className="text-text-secondary">Create your profile first.</p>
+        <p className="text-text-secondary">{t('share.createFirst')}</p>
       </div>
     );
   }
@@ -62,9 +64,9 @@ export default function SharePage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
-        <h1 className="text-lg font-bold text-text-primary mb-1">Share Your Card</h1>
+        <h1 className="text-lg font-bold text-text-primary mb-1">{t('share.title')}</h1>
         <p className="text-sm text-text-secondary">
-          Scan the QR code or share the link
+          {t('share.subtitle')}
         </p>
       </div>
 
@@ -83,15 +85,15 @@ export default function SharePage() {
               <CreditCard size={14} className="text-near-green" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-text-primary">NFC Card</p>
+              <p className="text-sm font-semibold text-text-primary">{t('share.nfcCard')}</p>
               <div className="flex items-center gap-1">
                 {primaryCard.isPartyMode && (
                   <Zap size={10} className="text-near-green" />
                 )}
                 <p className="text-xs text-text-secondary">
                   {primaryCard.isPartyMode
-                    ? `Party Mode - ${primaryCard.partyLinkLabel || 'Active'}`
-                    : 'Normal Mode - Shows your card'}
+                    ? t('share.partyMode', { label: primaryCard.partyLinkLabel || 'Active' })
+                    : t('share.normalMode')}
                 </p>
               </div>
             </div>
@@ -112,9 +114,9 @@ export default function SharePage() {
 
       <div className="text-center">
         <p className="text-xs text-text-tertiary">
-          Recipients can view your card without an account (Level 0).
+          {t('share.level0')}
           <br />
-          They can connect a wallet to exchange cards and receive SBT + 0.01 NEAR.
+          {t('share.level0sbt')}
         </p>
       </div>
     </div>

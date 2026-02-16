@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { useI18n } from '@/lib/i18n';
 import { unlinkCard } from '@/lib/card-binding';
 import type { NfcCard } from '@/lib/types';
 import { CreditCard, Unlink, Zap, Loader2 } from 'lucide-react';
@@ -14,6 +15,7 @@ interface NfcCardManagerProps {
 }
 
 export function NfcCardManager({ cards, accountId, onCardUnlinked }: NfcCardManagerProps) {
+  const { t } = useI18n();
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
@@ -33,9 +35,9 @@ export function NfcCardManager({ cards, accountId, onCardUnlinked }: NfcCardMana
         <div className="flex items-center gap-3">
           <CreditCard size={18} className="text-text-tertiary" />
           <div>
-            <p className="text-sm text-text-secondary">No NFC cards linked</p>
+            <p className="text-sm text-text-secondary">{t('nfc.noCards')}</p>
             <p className="text-xs text-text-tertiary">
-              Tap an NFC card to start linking it to your account.
+              {t('nfc.noCardsDesc')}
             </p>
           </div>
         </div>
@@ -62,12 +64,12 @@ export function NfcCardManager({ cards, accountId, onCardUnlinked }: NfcCardMana
                   {card.isPartyMode && (
                     <span className="flex items-center gap-1 text-xs text-near-green">
                       <Zap size={10} />
-                      Party
+                      {t('nfc.party')}
                     </span>
                   )}
                   {card.linkedAt && (
                     <span className="text-xs text-text-tertiary">
-                      Linked {new Date(card.linkedAt).toLocaleDateString()}
+                      {t('nfc.linked', { date: new Date(card.linkedAt).toLocaleDateString() })}
                     </span>
                   )}
                 </div>
@@ -82,7 +84,7 @@ export function NfcCardManager({ cards, accountId, onCardUnlinked }: NfcCardMana
                     variant="ghost"
                     onClick={() => setConfirmId(null)}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     size="sm"
@@ -96,7 +98,7 @@ export function NfcCardManager({ cards, accountId, onCardUnlinked }: NfcCardMana
                     ) : (
                       <Unlink size={12} />
                     )}
-                    Unlink
+                    {t('nfc.unlink')}
                   </Button>
                 </div>
               ) : (

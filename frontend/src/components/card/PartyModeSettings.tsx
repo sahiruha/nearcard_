@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { useI18n } from '@/lib/i18n';
 import type { LinkItem } from '@/lib/types';
 import { ExternalLink, Check, Globe, ArrowLeft } from 'lucide-react';
 
@@ -14,6 +15,7 @@ interface PartyModeSettingsProps {
 }
 
 export function PartyModeSettings({ links, currentUrl, onSave, onBack }: PartyModeSettingsProps) {
+  const { t } = useI18n();
   const [selectedIndex, setSelectedIndex] = useState<number>(() => {
     if (!currentUrl) return -1;
     return links.findIndex((l) => l.url === currentUrl);
@@ -28,8 +30,8 @@ export function PartyModeSettings({ links, currentUrl, onSave, onBack }: PartyMo
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h2 className="text-sm font-semibold text-text-primary">Party Mode Link</h2>
-          <p className="text-xs text-text-secondary">NFCタップ時のリダイレクト先を選択</p>
+          <h2 className="text-sm font-semibold text-text-primary">{t('partySettings.title')}</h2>
+          <p className="text-xs text-text-secondary">{t('partySettings.subtitle')}</p>
         </div>
       </div>
 
@@ -37,7 +39,7 @@ export function PartyModeSettings({ links, currentUrl, onSave, onBack }: PartyMo
         {links.length === 0 ? (
           <Card className="p-4">
             <p className="text-sm text-text-secondary text-center">
-              プロフィールにリンクを追加してから設定してください。
+              {t('partySettings.noLinks')}
             </p>
           </Card>
         ) : (
@@ -79,7 +81,7 @@ export function PartyModeSettings({ links, currentUrl, onSave, onBack }: PartyMo
           <div className="flex items-center gap-2">
             <ExternalLink size={14} className="text-near-green flex-shrink-0" />
             <p className="text-xs text-text-secondary truncate">
-              Redirect to: <span className="text-text-primary">{selectedLink.url}</span>
+              {t('partySettings.redirectTo', { url: selectedLink.url })}
             </p>
           </div>
         </Card>
@@ -90,7 +92,7 @@ export function PartyModeSettings({ links, currentUrl, onSave, onBack }: PartyMo
         disabled={!selectedLink}
         className="w-full"
       >
-        Save Party Mode Link
+        {t('partySettings.save')}
       </Button>
     </div>
   );

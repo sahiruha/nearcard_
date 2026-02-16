@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ConnectButton } from '@/components/wallet/ConnectButton';
+import { LanguageSelector } from '@/components/layout/LanguageSelector';
 
 export function Header() {
   return (
@@ -15,7 +16,10 @@ export function Header() {
             NEAR<span className="text-near-green">Card</span>
           </span>
         </Link>
-        <ConnectButton />
+        <div className="flex items-center gap-2">
+          <LanguageSelector />
+          <ConnectButton />
+        </div>
       </div>
     </header>
   );

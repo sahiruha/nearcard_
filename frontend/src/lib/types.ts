@@ -19,6 +19,7 @@ export type LinkType =
   | 'telegram'
   | 'github'
   | 'linkedin'
+  | 'discord'
   | 'email'
   | 'custom';
 

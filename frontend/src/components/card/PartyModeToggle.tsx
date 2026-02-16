@@ -1,6 +1,7 @@
 'use client';
 
 import { Zap } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface PartyModeToggleProps {
   isEnabled: boolean;
@@ -10,6 +11,8 @@ interface PartyModeToggleProps {
 }
 
 export function PartyModeToggle({ isEnabled, linkLabel, onToggle, onConfigure }: PartyModeToggleProps) {
+  const { t } = useI18n();
+
   return (
     <div
       className={`p-4 rounded-[var(--radius-lg)] border transition-all duration-200 ${
@@ -28,13 +31,13 @@ export function PartyModeToggle({ isEnabled, linkLabel, onToggle, onConfigure }:
             <Zap size={16} className={isEnabled ? 'text-near-green' : 'text-text-tertiary'} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-text-primary">Party Mode</p>
+            <p className="text-sm font-semibold text-text-primary">{t('party.title')}</p>
             <p className="text-xs text-text-secondary">
               {isEnabled
                 ? linkLabel
-                  ? `Active - ${linkLabel}`
-                  : 'Active - Select a link'
-                : 'Off - Card view on tap'}
+                  ? t('party.active', { label: linkLabel })
+                  : t('party.selectLink')
+                : t('party.off')}
             </p>
           </div>
         </div>
@@ -45,7 +48,7 @@ export function PartyModeToggle({ isEnabled, linkLabel, onToggle, onConfigure }:
               onClick={onConfigure}
               className="text-xs text-near-green hover:opacity-80 cursor-pointer"
             >
-              Change
+              {t('party.change')}
             </button>
           )}
           {/* Toggle switch */}

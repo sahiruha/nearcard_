@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { getCardByCardId, linkCard } from '@/lib/card-binding';
 import { getProfile, encodeProfileForUrl } from '@/lib/profile';
+import { useI18n } from '@/lib/i18n';
 import { CreditCard, Link2, AlertTriangle, CheckCircle } from 'lucide-react';
 
 type PageState = 'loading' | 'need-wallet' | 'ready' | 'already-linked' | 'success' | 'error';
@@ -15,6 +16,7 @@ function CardRegisterContent() {
   const searchParams = useSearchParams();
   const cardId = searchParams.get('cardId');
   const { accountId, isSignedIn, isLoading: walletLoading, signIn } = useWallet();
+  const { t } = useI18n();
   const router = useRouter();
 
   const [pageState, setPageState] = useState<PageState>('loading');
@@ -24,7 +26,7 @@ function CardRegisterContent() {
   useEffect(() => {
     if (!cardId) {
       setPageState('error');
-      setErrorMessage('Card ID is not specified.');
+      setErrorMessage(t('register.noCardId'));
       return;
     }
 
@@ -41,7 +43,7 @@ function CardRegisterContent() {
           setPageState('already-linked');
         } else {
           setPageState('error');
-          setErrorMessage('This card is already linked to another account.');
+          setErrorMessage(t('register.alreadyLinkedOther'));
         }
       } else {
         setPageState('ready');
@@ -69,7 +71,7 @@ function CardRegisterContent() {
       setPageState('success');
     } else {
       setPageState('error');
-      setErrorMessage(result.error || 'Failed to link the card.');
+      setErrorMessage(result.error || t('register.linkFailed'));
     }
 
     setLinking(false);
@@ -78,7 +80,7 @@ function CardRegisterContent() {
   if (pageState === 'loading' || walletLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-pulse text-text-secondary">Loading...</div>
+        <div className="animate-pulse text-text-secondary">{t('common.loading')}</div>
       </div>
     );
   }
@@ -90,11 +92,11 @@ function CardRegisterContent() {
           <AlertTriangle size={32} className="text-danger" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">Error</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('common.error')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">{errorMessage}</p>
         </div>
         <Button variant="secondary" onClick={() => router.push('/card')}>
-          Back to My Card
+          {t('register.backToCard')}
         </Button>
       </div>
     );
@@ -107,9 +109,9 @@ function CardRegisterContent() {
           <CreditCard size={32} className="text-near-green" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">NFC Card Registration</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('register.title')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">
-            Connect your wallet to link this NFC card to your account.
+            {t('register.connectDesc')}
           </p>
         </div>
         {cardId && (
@@ -117,14 +119,14 @@ function CardRegisterContent() {
             <div className="flex items-center gap-3">
               <CreditCard size={18} className="text-text-tertiary" />
               <div>
-                <p className="text-xs text-text-secondary">Card ID</p>
+                <p className="text-xs text-text-secondary">{t('register.cardId')}</p>
                 <p className="text-sm text-text-primary font-mono">{cardId}</p>
               </div>
             </div>
           </Card>
         )}
         <Button onClick={() => signIn()}>
-          Connect Wallet
+          {t('common.connectWallet')}
         </Button>
       </div>
     );
@@ -137,13 +139,13 @@ function CardRegisterContent() {
           <CheckCircle size={32} className="text-near-green" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">Already Linked</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('register.alreadyLinked')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">
-            This card is already linked to your account.
+            {t('register.alreadyLinkedDesc')}
           </p>
         </div>
         <Button onClick={() => router.push('/card')}>
-          Go to My Card
+          {t('register.goToCard')}
         </Button>
       </div>
     );
@@ -156,13 +158,13 @@ function CardRegisterContent() {
           <CheckCircle size={32} className="text-near-green" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-text-primary mb-2">Card Linked!</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-2">{t('register.cardLinked')}</h1>
           <p className="text-sm text-text-secondary max-w-xs">
-            Your NFC card has been linked. Tapping it will now show your profile.
+            {t('register.cardLinkedDesc')}
           </p>
         </div>
         <Button onClick={() => router.push('/card')}>
-          Go to My Card
+          {t('register.goToCard')}
         </Button>
       </div>
     );
@@ -175,9 +177,9 @@ function CardRegisterContent() {
         <Link2 size={32} className="text-near-green" />
       </div>
       <div>
-        <h1 className="text-xl font-bold text-text-primary mb-2">Link NFC Card</h1>
+        <h1 className="text-xl font-bold text-text-primary mb-2">{t('register.linkTitle')}</h1>
         <p className="text-sm text-text-secondary max-w-xs">
-          Link this NFC card to your NEAR account. Share your profile with a tap.
+          {t('register.linkDesc')}
         </p>
       </div>
 
@@ -186,7 +188,7 @@ function CardRegisterContent() {
           <div className="flex items-center gap-3">
             <CreditCard size={18} className="text-text-tertiary" />
             <div>
-              <p className="text-xs text-text-secondary">Card ID</p>
+              <p className="text-xs text-text-secondary">{t('register.cardId')}</p>
               <p className="text-sm text-text-primary font-mono">{cardId}</p>
             </div>
           </div>
@@ -194,7 +196,7 @@ function CardRegisterContent() {
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-near-green" />
               <div>
-                <p className="text-xs text-text-secondary">Account</p>
+                <p className="text-xs text-text-secondary">{t('register.account')}</p>
                 <p className="text-sm text-text-primary">{accountId}</p>
               </div>
             </div>
@@ -204,7 +206,7 @@ function CardRegisterContent() {
 
       <Button onClick={handleLink} loading={linking}>
         <Link2 size={16} />
-        Link This Card
+        {t('register.linkButton')}
       </Button>
     </div>
   );

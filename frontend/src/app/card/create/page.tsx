@@ -8,21 +8,24 @@ import { Input } from '@/components/ui/Input';
 import { saveProfile } from '@/lib/profile';
 import { getApiBaseUrl } from '@/lib/api-client';
 import type { LinkItem, LinkType } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 import { Plus, Trash2, ArrowLeft, Camera } from 'lucide-react';
 import Link from 'next/link';
 
-const linkTypeOptions: { value: LinkType; label: string }[] = [
-  { value: 'twitter', label: 'Twitter / X' },
-  { value: 'telegram', label: 'Telegram' },
-  { value: 'github', label: 'GitHub' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'website', label: 'Website' },
-  { value: 'email', label: 'Email' },
-  { value: 'custom', label: 'Custom' },
+const linkTypeKeys: { value: LinkType; key: string }[] = [
+  { value: 'twitter', key: 'linkType.twitter' },
+  { value: 'telegram', key: 'linkType.telegram' },
+  { value: 'github', key: 'linkType.github' },
+  { value: 'linkedin', key: 'linkType.linkedin' },
+  { value: 'discord', key: 'linkType.discord' },
+  { value: 'website', key: 'linkType.website' },
+  { value: 'email', key: 'linkType.email' },
+  { value: 'custom', key: 'linkType.custom' },
 ];
 
 export default function CreateCardPage() {
   const { accountId, isSignedIn } = useWallet();
+  const { t } = useI18n();
   const router = useRouter();
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
@@ -45,8 +48,8 @@ export default function CreateCardPage() {
     if (field === 'type') {
       updated[index] = { ...updated[index], type: value as LinkType };
       if (!updated[index].label) {
-        const opt = linkTypeOptions.find((o) => o.value === value);
-        if (opt) updated[index].label = opt.label;
+        const opt = linkTypeKeys.find((o) => o.value === value);
+        if (opt) updated[index].label = t(opt.key);
       }
     } else {
       updated[index] = { ...updated[index], [field]: value };
@@ -86,7 +89,7 @@ export default function CreateCardPage() {
   if (!isSignedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <p className="text-text-secondary">Please connect your wallet first.</p>
+        <p className="text-text-secondary">{t('create.walletRequired')}</p>
       </div>
     );
   }
@@ -97,7 +100,7 @@ export default function CreateCardPage() {
         <Link href="/card" className="text-text-tertiary hover:text-text-primary transition-colors">
           <ArrowLeft size={20} />
         </Link>
-        <h1 className="text-lg font-bold">Create Your Card</h1>
+        <h1 className="text-lg font-bold">{t('create.title')}</h1>
       </div>
 
       {/* Avatar Upload */}
@@ -122,17 +125,17 @@ export default function CreateCardPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <Input label="Name *" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input label="Title" placeholder="e.g. Blockchain Developer" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <Input label="Organization" placeholder="e.g. NEAR Protocol" value={organization} onChange={(e) => setOrganization(e.target.value)} />
+        <Input label={t('create.nameLabel')} placeholder={t('create.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
+        <Input label={t('create.titleLabel')} placeholder={t('create.titlePlaceholder')} value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input label={t('create.orgLabel')} placeholder={t('create.orgPlaceholder')} value={organization} onChange={(e) => setOrganization(e.target.value)} />
       </div>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-text-primary">Links</h2>
+          <h2 className="text-sm font-semibold text-text-primary">{t('create.links')}</h2>
           <button onClick={addLink} className="flex items-center gap-1 text-xs text-near-green hover:opacity-80 transition-opacity cursor-pointer">
             <Plus size={14} />
-            Add Link
+            {t('create.addLink')}
           </button>
         </div>
 
@@ -144,9 +147,9 @@ export default function CreateCardPage() {
                 onChange={(e) => updateLink(i, 'type', e.target.value)}
                 className="flex-1 px-3 py-2 bg-bg-input border border-border rounded-[var(--radius-md)] text-xs text-text-primary"
               >
-                {linkTypeOptions.map((opt) => (
+                {linkTypeKeys.map((opt) => (
                   <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {t(opt.key)}
                   </option>
                 ))}
               </select>
@@ -154,14 +157,14 @@ export default function CreateCardPage() {
                 <Trash2 size={14} />
               </button>
             </div>
-            <Input placeholder="Label" value={link.label} onChange={(e) => updateLink(i, 'label', e.target.value)} />
-            <Input placeholder="URL" value={link.url} onChange={(e) => updateLink(i, 'url', e.target.value)} />
+            <Input placeholder={t('create.labelPlaceholder')} value={link.label} onChange={(e) => updateLink(i, 'label', e.target.value)} />
+            <Input placeholder={t('create.urlPlaceholder')} value={link.url} onChange={(e) => updateLink(i, 'url', e.target.value)} />
           </div>
         ))}
       </div>
 
       <Button onClick={handleSubmit} disabled={!name.trim()} className="w-full">
-        Create Card
+        {t('create.submit')}
       </Button>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import QRCode from 'react-qr-code';
 import { Copy, Check } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface QRCodeDisplayProps {
   url: string;
@@ -10,6 +11,7 @@ interface QRCodeDisplayProps {
 
 export function QRCodeDisplay({ url }: QRCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useI18n();
 
   const copyUrl = async () => {
     await navigator.clipboard.writeText(url);
@@ -29,12 +31,12 @@ export function QRCodeDisplay({ url }: QRCodeDisplayProps) {
         {copied ? (
           <>
             <Check size={14} className="text-near-green" />
-            <span className="text-near-green">Copied!</span>
+            <span className="text-near-green">{t('qr.copied')}</span>
           </>
         ) : (
           <>
             <Copy size={14} />
-            <span>Copy Link</span>
+            <span>{t('qr.copyLink')}</span>
           </>
         )}
       </button>

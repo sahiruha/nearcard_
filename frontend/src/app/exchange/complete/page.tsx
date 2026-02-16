@@ -3,9 +3,9 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { getExplorerUrl } from '@/lib/near';
-import { CheckCircle, ExternalLink, ArrowLeft } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
+import { ArrowLeft, MessageCircle, Tag, StickyNote } from 'lucide-react';
 
 interface ExchangeData {
   party_a: string;
@@ -18,6 +18,7 @@ interface ExchangeData {
 function ExchangeCompleteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
   const [exchangeData, setExchangeData] = useState<ExchangeData | null>(null);
 
   useEffect(() => {
@@ -43,71 +44,116 @@ function ExchangeCompleteContent() {
     return near.toFixed(2);
   };
 
+  const initialsOf = (id: string) =>
+    id.replace('.near', '').replace('.testnet', '').slice(0, 2).toUpperCase();
+
   return (
-    <div className="flex flex-col gap-6 items-center">
-      <div className="flex flex-col items-center gap-3 pt-4">
-        <div className="w-16 h-16 rounded-full bg-near-green-dim border border-near-green-mid flex items-center justify-center">
-          <CheckCircle size={32} className="text-near-green" />
-        </div>
-        <h1 className="text-xl font-bold text-text-primary">Exchange Complete!</h1>
-        <p className="text-sm text-text-secondary text-center">
-          Connection Proof SBTs have been minted for both parties.
-        </p>
+    <div className="flex flex-col gap-5 items-center">
+      {/* Sparkle header */}
+      <div className="text-center pt-6 pb-2">
+        <div className="text-5xl mb-3 animate-pulse">&#10024;</div>
+        <h1
+          className="text-2xl font-extrabold"
+          style={{
+            background: 'linear-gradient(135deg, var(--near-green), var(--blue))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
+          {t('complete.connected')}
+        </h1>
+        <p className="text-[13px] text-text-secondary mt-1">{t('complete.connectedSub')}</p>
       </div>
 
-      {exchangeData && (
-        <Card className="p-4 w-full">
-          <div className="flex flex-col gap-3">
-            {exchangeData.party_a && (
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-text-secondary">From</span>
-                <span className="text-sm text-text-primary font-medium truncate max-w-[200px]">
-                  {exchangeData.party_a}
-                </span>
-              </div>
-            )}
-            {exchangeData.party_b && (
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-text-secondary">To</span>
-                <span className="text-sm text-text-primary font-medium truncate max-w-[200px]">
-                  {exchangeData.party_b}
-                </span>
-              </div>
-            )}
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-text-secondary">Event</span>
-              <span className="text-sm text-text-primary">{exchangeData.event_name}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-text-secondary">NEAR Transferred</span>
-              <span className="text-sm text-near-green font-semibold">
-                {formatNear(exchangeData.transfer_amount)} NEAR
-              </span>
-            </div>
-            {exchangeData.tx_hash && (
-              <>
-                <div className="border-t border-border my-1" />
-                <a
-                  href={getExplorerUrl(exchangeData.tx_hash)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 text-sm text-nc-blue hover:opacity-80 transition-opacity"
-                >
-                  <ExternalLink size={14} />
-                  View on Explorer
-                </a>
-              </>
-            )}
+      {/* Handshake visual */}
+      {exchangeData && (exchangeData.party_a || exchangeData.party_b) && (
+        <div className="flex items-center justify-center gap-4">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-near-green to-nc-blue flex items-center justify-center text-base font-bold text-black">
+            {initialsOf(exchangeData.party_a)}
           </div>
-        </Card>
+          <div className="w-10 h-0.5 rounded-full bg-gradient-to-r from-near-green to-nc-blue" />
+          <span className="text-2xl">&#129309;</span>
+          <div className="w-10 h-0.5 rounded-full bg-gradient-to-r from-nc-blue to-near-green" />
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-nc-purple to-near-green flex items-center justify-center text-base font-bold text-black">
+            {initialsOf(exchangeData.party_b)}
+          </div>
+        </div>
       )}
 
-      <div className="flex flex-col gap-3 w-full">
-        <Button onClick={() => router.push('/card')} className="w-full">
-          <ArrowLeft size={16} />
-          Back to My Card
-        </Button>
+      {/* SBT Card */}
+      {exchangeData && (
+        <div
+          className="w-full rounded-[var(--radius-lg)] p-4 border border-near-green-mid"
+          style={{
+            background: 'linear-gradient(135deg, rgba(0,236,151,0.08), rgba(68,136,255,0.08))',
+          }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">&#127915;</span>
+            <span className="text-[15px] font-bold text-near-green">{t('complete.sbt')}</span>
+          </div>
+          {exchangeData.event_name && (
+            <div className="flex justify-between text-xs py-1">
+              <span className="text-text-tertiary">{t('complete.location')}</span>
+              <span className="text-text-secondary font-medium">{exchangeData.event_name}</span>
+            </div>
+          )}
+          {exchangeData.tx_hash && (
+            <div className="flex justify-between text-xs py-1">
+              <span className="text-text-tertiary">{t('complete.tx')}</span>
+              <a
+                href={getExplorerUrl(exchangeData.tx_hash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-near-green font-medium hover:opacity-80"
+              >
+                {exchangeData.tx_hash.slice(0, 4)}...{exchangeData.tx_hash.slice(-4)} &#8599;
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* NEAR received badge */}
+      {exchangeData && (
+        <div className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-near-green-dim border border-near-green-mid rounded-[var(--radius-md)]">
+          <span className="text-xl">&#9830;</span>
+          <div>
+            <div className="text-lg font-bold text-near-green">
+              +{formatNear(exchangeData.transfer_amount)} NEAR
+            </div>
+            <div className="text-xs text-text-secondary">{t('complete.received')}</div>
+          </div>
+        </div>
+      )}
+
+      {/* What's Next */}
+      <div className="w-full">
+        <div className="text-[11px] font-semibold tracking-[1.5px] uppercase text-text-tertiary mb-3">
+          {t('complete.whatsNext')}
+        </div>
+        <div className="flex gap-2">
+          <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-bg-card border border-border rounded-[var(--radius-md)] text-xs font-medium text-text-secondary hover:border-near-green hover:text-near-green transition-all cursor-pointer">
+            <MessageCircle size={14} />
+            {t('complete.message')}
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-bg-card border border-border rounded-[var(--radius-md)] text-xs font-medium text-text-secondary hover:border-near-green hover:text-near-green transition-all cursor-pointer">
+            <Tag size={14} />
+            {t('complete.tag')}
+          </button>
+          <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-bg-card border border-border rounded-[var(--radius-md)] text-xs font-medium text-text-secondary hover:border-near-green hover:text-near-green transition-all cursor-pointer">
+            <StickyNote size={14} />
+            {t('complete.note')}
+          </button>
+        </div>
       </div>
+
+      {/* Back button */}
+      <Button variant="secondary" onClick={() => router.push('/card')} className="w-full mt-2">
+        <ArrowLeft size={16} />
+        {t('complete.backHome')}
+      </Button>
     </div>
   );
 }
